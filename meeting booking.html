@@ -1,0 +1,2380 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MeetSpace — Booking Ruangan Meeting</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & VARIABLES ===== */
+:root {
+  --cream: #F7F3EE;
+  --dark: #18192B;
+  --mid: #252640;
+  --accent: #C9986A;
+  --accent2: #8B74D8;
+  --text: #2E2F3E;
+  --muted: #8C8DA8;
+  --surface: #FFFFFF;
+  --border: #EAE6DE;
+  --green: #3DB87A;
+  --red: #E55A5A;
+  --yellow: #E0953A;
+  --nav-h: 60px;
+  --bottom-h: 64px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: var(--bottom-h);
+  overflow-x: hidden;
+}
+
+/* ===== TOP NAV ===== */
+.top-nav {
+  background: var(--dark);
+  height: var(--nav-h);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--accent);
+}
+.logo span { color: #fff; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.notif-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.notif-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 2px solid var(--dark);
+}
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--bottom-h);
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 200;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+}
+.bnav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: 12px;
+  transition: background 0.15s;
+}
+.bnav-item:active { background: rgba(255,255,255,0.07); }
+.bnav-icon { font-size: 20px; }
+.bnav-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.3px;
+}
+.bnav-item.active .bnav-label { color: var(--accent); }
+.bnav-item.active .bnav-icon { filter: drop-shadow(0 0 6px rgba(201,152,106,0.8)); }
+
+/* ===== VIEWS ===== */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ===== HERO ===== */
+.hero {
+  background: var(--dark);
+  padding: 28px 20px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(201,152,106,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 20%;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(139,116,216,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-greeting {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 4px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.hero h1 em { color: var(--accent); font-style: normal; }
+.hero-stats {
+  display: flex;
+  gap: 0;
+  background: rgba(255,255,255,0.07);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.stat {
+  flex: 1;
+  padding: 14px 0;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.stat-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-wrap {
+  padding: 0 16px;
+  margin-top: -18px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 20px;
+}
+.search-box {
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.1);
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.search-input-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+}
+.search-input-wrap input {
+  border: none;
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+}
+.search-icon { font-size: 16px; color: var(--muted); }
+.btn-filter {
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ===== FILTER CHIPS SCROLL ===== */
+.chips-row {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips-row::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--muted);
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.chip.active {
+  background: var(--dark);
+  color: #fff;
+  border-color: var(--dark);
+}
+
+/* ===== SECTION HEADER ===== */
+.section-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  margin-bottom: 14px;
+}
+.section-hdr h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--dark);
+}
+.section-hdr h2 span { color: var(--accent); }
+.see-all {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ===== ROOM CARDS ===== */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 16px 24px;
+}
+@media (min-width: 500px) {
+  .rooms-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}
+@media (min-width: 768px) {
+  .rooms-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0 24px 32px; }
+}
+@media (min-width: 1024px) {
+  .rooms-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.room-card {
+  background: var(--surface);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.room-card:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .room-card:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(0,0,0,0.1); border-color: var(--accent); }
+}
+
+.room-thumb {
+  height: 110px;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.room-thumb-bg { width: 100%; height: 100%; position: absolute; inset: 0; }
+.room-emoji { font-size: 40px; opacity: 0.22; position: relative; z-index: 1; }
+.room-badge {
+  position: absolute;
+  bottom: 8px; right: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  z-index: 2;
+}
+.badge-available { background: rgba(61,184,122,0.92); color: #fff; }
+.badge-limited { background: rgba(224,149,58,0.92); color: #fff; }
+.room-floor-tag {
+  position: absolute;
+  top: 8px; left: 8px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.room-bg-1 { background: linear-gradient(135deg,#1A1A2E,#3D3D5C); }
+.room-bg-2 { background: linear-gradient(135deg,#2C1810,#6B3A2A); }
+.room-bg-3 { background: linear-gradient(135deg,#0D2137,#2D5C7A); }
+.room-bg-4 { background: linear-gradient(135deg,#1A2E1A,#3D6B3D); }
+.room-bg-5 { background: linear-gradient(135deg,#2E1A2E,#6B3D6B); }
+.room-bg-6 { background: linear-gradient(135deg,#2E2A1A,#6B5A2A); }
+
+.room-body { padding: 12px; }
+.room-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.room-loc {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.room-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.room-tag {
+  font-size: 10px;
+  background: var(--cream);
+  padding: 3px 7px;
+  border-radius: 5px;
+  color: var(--text);
+  font-weight: 500;
+}
+.room-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+}
+.room-cap { font-size: 11px; color: var(--muted); }
+.btn-book {
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-book:active { background: var(--accent); color: var(--dark); }
+
+/* ===== CALENDAR VIEW ===== */
+.calendar-view { padding: 16px; }
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.cal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--dark);
+}
+.cal-title span { color: var(--accent); }
+.cal-nav-btns { display: flex; gap: 8px; }
+.cal-nav-btn {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  color: var(--text);
+}
+.cal-nav-btn:active { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+/* Day-of-week header */
+.cal-dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.cal-dow span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 6px 0;
+  letter-spacing: 0.5px;
+}
+
+/* Calendar grid */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  background: transparent;
+  min-width: 0;
+}
+.cal-day:not(.empty):hover { background: rgba(201,152,106,0.12); }
+.cal-day.today {
+  background: var(--dark);
+  color: #fff;
+}
+.cal-day.selected {
+  background: var(--accent);
+  color: #fff;
+}
+.cal-day.has-booking::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent2);
+}
+.cal-day.today.has-booking::after, .cal-day.selected.has-booking::after {
+  background: rgba(255,255,255,0.7);
+}
+.cal-day.other-month .day-num { opacity: 0.25; }
+.cal-day.empty { pointer-events: none; }
+.day-num {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+.day-dots {
+  display: flex;
+  gap: 2px;
+  margin-top: 3px;
+  height: 4px;
+}
+.day-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Calendar booking list */
+.cal-bookings {
+  margin-top: 20px;
+}
+.cal-bookings-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+.cal-booking-item {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  border-left: 4px solid var(--accent);
+}
+.cal-booking-item.pending { border-left-color: var(--yellow); }
+.cal-booking-item.cancelled { border-left-color: var(--red); }
+.cal-booking-info { flex: 1 }
+.cal-booking-room {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--dark);
+  margin-bottom: 3px;
+}
+.cal-booking-time {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+}
+.cal-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.status-confirmed { background: rgba(61,184,122,0.12); color: var(--green); }
+.status-pending { background: rgba(224,149,58,0.12); color: var(--yellow); }
+.status-cancelled { background: rgba(229,90,90,0.1); color: var(--red); }
+
+/* Calendar legend */
+.cal-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+/* ===== MY BOOKINGS VIEW ===== */
+.bookings-view { padding: 16px; }
+.bookings-view h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+.booking-tabs {
+  display: flex;
+  gap: 0;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.booking-tab {
+  flex: 1;
+  padding: 9px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 9px;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.booking-tab.active {
+  background: var(--dark);
+  color: #fff;
+}
+.booking-list { display: flex; flex-direction: column; gap: 12px; }
+.booking-card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border: 1.5px solid var(--border);
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+.booking-card:active { border-color: var(--accent); }
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.booking-room-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark);
+}
+.booking-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.booking-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--cream);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.booking-code {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(5px);
+  z-index: 500;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 -8px 60px rgba(0,0,0,0.25);
+  animation: slideUp 0.35s cubic-bezier(.34,1.56,.64,1);
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 600px) {
+  .modal-overlay { align-items: center; padding: 20px; }
+  .modal { border-radius: 20px; max-height: 88vh; }
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Drag handle */
+.modal-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+@media (min-width: 600px) { .modal-handle { display: none; } }
+
+.modal-hero {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  margin: 12px 12px 0;
+  border-radius: 16px;
+}
+.modal-hero-bg {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px; opacity: 0.2;
+}
+.modal-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%);
+}
+.modal-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  border: none; color: #fff;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-hero-info {
+  position: absolute;
+  bottom: 14px; left: 16px;
+  color: #fff;
+}
+.modal-hero-info h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  margin-bottom: 2px;
+}
+.modal-hero-info p { font-size: 12px; opacity: 0.7; }
+
+.modal-body { padding: 20px 16px 30px; }
+
+.info-pills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.info-pill {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 12px;
+}
+.info-pill label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.info-pill value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.facility-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 22px;
+}
+.fac-pill {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.modal-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--dark);
+  margin-bottom: 14px;
+}
+
+/* ===== MONTHLY CALENDAR IN MODAL ===== */
+.modal-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.modal-cal-month {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--dark);
+}
+.modal-cal-nav { display: flex; gap: 6px; }
+.modal-cal-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+}
+.modal-cal-dow {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.modal-cal-dow span {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 4px 0;
+}
+.modal-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 2px;
+  margin-bottom: 16px;
+}
+.modal-cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.15s;
+  color: var(--text);
+}
+.modal-cal-day:not(.empty):not(.past):not(.unavail):hover { background: rgba(201,152,106,0.15); }
+.modal-cal-day.today { background: var(--dark); color: #fff; }
+.modal-cal-day.selected { background: var(--accent); color: #fff; }
+.modal-cal-day.unavail { color: var(--border); cursor: not-allowed; text-decoration: line-through; }
+.modal-cal-day.past { color: #C8C4BC; cursor: not-allowed; }
+.modal-cal-day.other-month { opacity: 0.3; }
+.modal-cal-day.empty { pointer-events: none; }
+.modal-cal-day.has-event {
+  position: relative;
+}
+.modal-cal-day.has-event::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent2);
+}
+
+/* Time slots */
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-bottom: 20px;
+}
+.time-slot {
+  padding: 9px 4px;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--cream);
+  color: var(--text);
+}
+.time-slot.selected {
+  background: var(--dark);
+  color: #fff;
+  border-color: var(--dark);
+}
+.time-slot.unavail {
+  background: #F0EDED;
+  color: #C5BFB8;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Form */
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--cream);
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.booking-summary {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.summary-row:last-child {
+  margin-bottom: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-weight: 700;
+}
+.summary-row:last-child span:last-child { color: var(--green); }
+
+.btn-confirm {
+  width: 100%;
+  padding: 15px;
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  border-radius: 13px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+.btn-confirm:active { background: var(--accent); color: var(--dark); transform: scale(0.98); }
+
+/* ===== SUCCESS OVERLAY ===== */
+.success-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  z-index: 800;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.success-overlay.active { display: flex; }
+.success-card {
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 40px 28px;
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+.success-icon {
+  width: 70px; height: 70px;
+  background: linear-gradient(135deg, var(--green), #1e8a50);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 28px rgba(61,184,122,0.35);
+}
+.success-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--dark);
+}
+.success-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.booking-code-box {
+  background: var(--cream);
+  border: 2px dashed var(--accent);
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  letter-spacing: 3px;
+  color: var(--dark);
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+.btn-done {
+  width: 100%;
+  padding: 14px;
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-done:active { background: var(--accent); color: var(--dark); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: calc(var(--bottom-h) + 16px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--dark);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 9000;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== FILTER DRAWER ===== */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 400;
+  align-items: flex-end;
+}
+.drawer-overlay.active { display: flex; }
+.drawer {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  padding: 20px 20px 32px;
+  animation: slideUp 0.3s ease;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.drawer-handle {
+  width: 40px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.drawer h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+.filter-section { margin-bottom: 22px; }
+.filter-section h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.filter-chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.fchip {
+  padding: 7px 15px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.15s;
+}
+.fchip.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+.facility-checks { display: flex; flex-direction: column; gap: 10px; }
+.facility-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.facility-check input { accent-color: var(--accent); width: 16px; height: 16px; }
+.drawer-actions { display: flex; gap: 10px; margin-top: 8px; }
+.btn-apply {
+  flex: 1;
+  padding: 13px;
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-apply:active { background: var(--accent); color: var(--dark); }
+.btn-drawer-reset {
+  padding: 13px 18px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+
+/* ===== PROFILE VIEW ===== */
+.profile-view { padding: 0 0 24px; }
+.profile-hero { background: var(--dark); padding: 32px 20px 48px; position: relative; overflow: hidden; text-align: center; }
+.profile-hero::before { content: ""; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(201,152,106,0.2) 0%, transparent 70%); pointer-events: none; }
+.profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
+.profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; color: #fff; border: 4px solid rgba(255,255,255,0.15); margin: 0 auto; }
+.profile-edit-btn { position: absolute; bottom: 0; right: 0; width: 26px; height: 26px; background: var(--accent); border: 2px solid var(--dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
+.profile-name { font-family: "Playfair Display", serif; font-size: 22px; color: #fff; margin-bottom: 4px; }
+.profile-role { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 16px; }
+.profile-dept-badge { display: inline-block; background: rgba(201,152,106,0.2); border: 1px solid rgba(201,152,106,0.4); color: var(--accent); font-size: 12px; font-weight: 600; padding: 5px 16px; border-radius: 20px; }
+.profile-stats { display: flex; background: var(--surface); margin: -20px 16px 0; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); overflow: hidden; position: relative; z-index: 2; }
+.pstat { flex: 1; padding: 16px 8px; text-align: center; border-right: 1px solid var(--border); }
+.pstat:last-child { border-right: none; }
+.pstat-num { font-family: "Playfair Display", serif; font-size: 22px; font-weight: 700; color: var(--dark); }
+.pstat-label { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+.profile-section { margin: 20px 16px 0; background: var(--surface); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.profile-section-hdr { padding: 14px 16px; background: var(--dark); font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+.profile-field { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); gap: 12px; }
+.profile-field:last-child { border-bottom: none; }
+.pfield-label { font-size: 12px; color: var(--muted); font-weight: 600; min-width: 110px; flex-shrink: 0; }
+.pfield-value { font-size: 13px; color: var(--dark); font-weight: 600; text-align: right; }
+.pfield-value.editable { color: var(--accent); cursor: pointer; border-bottom: 1px dashed var(--accent); }
+.edit-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 600; align-items: flex-end; justify-content: center; }
+.edit-overlay.active { display: flex; }
+.edit-sheet { background: var(--surface); border-radius: 24px 24px 0 0; width: 100%; max-width: 600px; padding: 20px 20px 36px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+.edit-sheet h3 { font-family: "Playfair Display", serif; font-size: 20px; color: var(--dark); margin-bottom: 20px; }
+.edit-actions { display: flex; gap: 10px; margin-top: 16px; }
+.btn-save-profile { flex: 1; padding: 13px; background: var(--dark); color: #fff; border: none; border-radius: 12px; font-family: "Plus Jakarta Sans", sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-cancel-edit { padding: 13px 18px; background: transparent; border: 1.5px solid var(--border); border-radius: 12px; font-family: "Plus Jakarta Sans", sans-serif; font-size: 14px; cursor: pointer; color: var(--muted); }
+.export-card { margin: 16px 16px 0; background: linear-gradient(135deg, var(--dark), var(--mid)); border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 20px rgba(24,25,43,0.3); }
+.export-icon { width: 48px; height: 48px; background: rgba(201,152,106,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.export-info { flex: 1; }
+.export-info h4 { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.export-info p { color: rgba(255,255,255,0.45); font-size: 11px; }
+.btn-export { background: var(--accent); color: var(--dark); border: none; padding: 10px 16px; border-radius: 10px; font-family: "Plus Jakarta Sans", sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.profile-menu { margin: 16px 16px 0; }
+.menu-item { background: var(--surface); border-radius: 12px; display: flex; align-items: center; gap: 14px; padding: 16px; margin-bottom: 10px; cursor: pointer; border: 1.5px solid var(--border); transition: border-color 0.15s; }
+.menu-item:active { border-color: var(--accent); }
+.menu-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.menu-text { flex: 1; }
+.menu-text strong { display: block; font-size: 14px; color: var(--dark); }
+.menu-text span { font-size: 12px; color: var(--muted); }
+.menu-arrow { color: var(--muted); font-size: 16px; }
+.menu-danger { border-color: rgba(229,90,90,0.2); }
+.menu-danger .menu-text strong { color: var(--red); }
+/* ===== DESKTOP OVERRIDES ===== */
+@media (min-width: 768px) {
+  :root { --nav-h: 68px; --bottom-h: 0px; }
+  body { padding-bottom: 0; }
+  .bottom-nav { display: none; }
+  .top-nav { padding: 0 40px; }
+  .top-nav-desktop-links {
+    display: flex !important;
+    gap: 28px;
+    list-style: none;
+  }
+  .top-nav-desktop-links a {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .top-nav-desktop-links a:hover,
+  .top-nav-desktop-links a.active { color: var(--accent); }
+  .desktop-cta {
+    background: var(--accent);
+    color: var(--dark) !important;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-weight: 700 !important;
+  }
+  .hero { padding: 56px 40px 48px; }
+  .hero h1 { font-size: 42px; max-width: 500px; }
+  .search-wrap { padding: 0 40px; }
+  .chips-row { padding: 0 40px 20px; }
+  .section-hdr { padding: 0 40px; }
+  .rooms-grid { padding: 0 40px 32px; }
+  .calendar-view { padding: 28px 40px; }
+  .bookings-view { padding: 28px 40px; }
+  .modal-overlay { align-items: center; padding: 24px; }
+  .modal { border-radius: 20px; max-height: 88vh; }
+}
+
+.top-nav-desktop-links { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav">
+  <div class="logo">Meet<span>Space</span></div>
+  <ul class="top-nav-desktop-links">
+    <li><a href="#" class="active" onclick="switchView('home',this)">Cari Ruangan</a></li>
+    <li><a href="#" onclick="switchView('calendar',this)">Kalender</a></li>
+    <li><a href="#" onclick="switchView('bookings',this)">Booking Saya</a></li>
+    <li><a href="#" onclick="switchView('profile',this)">Profil</a></li>
+    <li><a href="#" class="desktop-cta">+ Booking</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="notif-btn" onclick="showToast('🔔 Tidak ada notifikasi baru')">
+      🔔<div class="notif-dot"></div>
+    </button>
+    <div class="avatar">BS</div>
+  </div>
+</nav>
+
+<!-- ===== VIEWS ===== -->
+
+<!-- HOME VIEW -->
+<div class="view active" id="view-home">
+  <div class="hero">
+    <div class="hero-greeting">Selamat datang, Budi! 👋</div>
+    <h1>Temukan Ruangan <em>Meeting</em> Terbaik</h1>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">24</div>
+        <div class="stat-label">Ruangan</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Lantai</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Rating</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Cari nama ruangan..." />
+      </div>
+      <button class="btn-filter" onclick="openDrawer()">⚙️</button>
+    </div>
+  </div>
+
+  <div class="chips-row">
+    <div class="chip active" onclick="toggleChip(this)">Semua</div>
+    <div class="chip" onclick="toggleChip(this)">Tersedia</div>
+    <div class="chip" onclick="toggleChip(this)">Kecil (≤8)</div>
+    <div class="chip" onclick="toggleChip(this)">Sedang (≤20)</div>
+    <div class="chip" onclick="toggleChip(this)">Besar (20+)</div>
+    <div class="chip" onclick="toggleChip(this)">VIP</div>
+  </div>
+
+  <div class="section-hdr">
+    <h2>Ruangan <span>Tersedia</span></h2>
+    <a class="see-all">Lihat Semua →</a>
+  </div>
+
+  <div class="rooms-grid">
+    <!-- Card 1 -->
+    <div class="room-card" onclick="openModal(0)">
+      <div class="room-thumb">
+        <div class="room-thumb-bg room-bg-1"></div>
+        <span class="room-emoji">🏛️</span>
+        <div class="room-floor-tag">Lt. 1</div>
+        <span class="room-badge badge-available">✓ Tersedia</span>
+      </div>
+      <div class="room-body">
+        <div class="room-name">Ruang Cendana</div>
+        <div class="room-loc">📍 Sayap Barat · Lt. 1</div>
+        <div class="room-tags">
+          <span class="room-tag">📽 Proyektor</span>
+          <span class="room-tag">📶 WiFi</span>
+        </div>
+        <div class="room-footer">
+          <div class="room-cap">👥 8 orang</div>
+          <button class="btn-book">Booking</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="room-card" onclick="openModal(1)">
+      <div class="room-thumb">
+        <div class="room-thumb-bg room-bg-2"></div>
+        <span class="room-emoji">🎯</span>
+        <div class="room-floor-tag">Lt. 2</div>
+        <span class="room-badge badge-limited">⚡ Sisa 2</span>
+      </div>
+      <div class="room-body">
+        <div class="room-name">Ruang Mahoni</div>
+        <div class="room-loc">📍 Sayap Timur · Lt. 2</div>
+        <div class="room-tags">
+          <span class="room-tag">📹 VC</span>
+          <span class="room-tag">🍽 Catering</span>
+        </div>
+        <div class="room-footer">
+          <div class="room-cap">👥 15 orang</div>
+          <button class="btn-book">Booking</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="room-card" onclick="openModal(2)">
+      <div class="room-thumb">
+        <div class="room-thumb-bg room-bg-3"></div>
+        <span class="room-emoji">🌊</span>
+        <div class="room-floor-tag">Lt. 3</div>
+        <span class="room-badge badge-available">✓ Tersedia</span>
+      </div>
+      <div class="room-body">
+        <div class="room-name">Ruang Laguna</div>
+        <div class="room-loc">📍 Pusat · Lt. 3</div>
+        <div class="room-tags">
+          <span class="room-tag">📽 4K</span>
+          <span class="room-tag">✏️ Board</span>
+        </div>
+        <div class="room-footer">
+          <div class="room-cap">👥 12 orang</div>
+          <button class="btn-book">Booking</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="room-card" onclick="openModal(3)">
+      <div class="room-thumb">
+        <div class="room-thumb-bg room-bg-4"></div>
+        <span class="room-emoji">🌿</span>
+        <div class="room-floor-tag">Lt. 4</div>
+        <span class="room-badge badge-available">✓ Tersedia</span>
+      </div>
+      <div class="room-body">
+        <div class="room-name">Ruang Emerald</div>
+        <div class="room-loc">📍 Sayap Utara · Lt. 4</div>
+        <div class="room-tags">
+          <span class="room-tag">📹 4K VC</span>
+          <span class="room-tag">🅿️ Parkir</span>
+        </div>
+        <div class="room-footer">
+          <div class="room-cap">👥 25 orang</div>
+          <button class="btn-book">Booking</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="room-card" onclick="openModal(4)">
+      <div class="room-thumb">
+        <div class="room-thumb-bg room-bg-5"></div>
+        <span class="room-emoji">💎</span>
+        <div class="room-floor-tag">Lt. 5 VIP</div>
+        <span class="room-badge badge-limited">⚡ Sisa 1</span>
+      </div>
+      <div class="room-body">
+        <div class="room-name">Amethyst VIP</div>
+        <div class="room-loc">📍 Eksekutif · Lt. 5</div>
+        <div class="room-tags">
+          <span class="room-tag">👑 VIP</span>
+          <span class="room-tag">🔒 Private</span>
+        </div>
+        <div class="room-footer">
+          <div class="room-cap">👥 10 orang</div>
+          <button class="btn-book">Booking</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="room-card" onclick="openModal(5)">
+      <div class="room-thumb">
+        <div class="room-thumb-bg room-bg-6"></div>
+        <span class="room-emoji">🌅</span>
+        <div class="room-floor-tag">Lt. 6 Rooftop</div>
+        <span class="room-badge badge-available">✓ Tersedia</span>
+      </div>
+      <div class="room-body">
+        <div class="room-name">Grand Panorama</div>
+        <div class="room-loc">📍 Rooftop · Lt. 6</div>
+        <div class="room-tags">
+          <span class="room-tag">🌇 View</span>
+          <span class="room-tag">🎤 Stage</span>
+        </div>
+        <div class="room-footer">
+          <div class="room-cap">👥 50 orang</div>
+          <button class="btn-book">Booking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR VIEW -->
+<div class="view" id="view-calendar">
+  <div class="calendar-view">
+    <div class="cal-header">
+      <div>
+        <div class="cal-title" id="calTitle">Mei <span>2026</span></div>
+      </div>
+      <div class="cal-nav-btns">
+        <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+        <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+      </div>
+    </div>
+
+    <div class="cal-dow">
+      <span>Min</span><span>Sen</span><span>Sel</span>
+      <span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+
+    <div class="cal-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--dark)"></div> Hari ini
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent)"></div> Dipilih
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent2)"></div> Ada booking
+      </div>
+    </div>
+
+    <div class="cal-bookings" id="calBookings">
+      <div class="cal-bookings-title">📋 Booking Hari Ini</div>
+    </div>
+  </div>
+</div>
+
+<!-- MY BOOKINGS VIEW -->
+<div class="view" id="view-bookings">
+  <div class="bookings-view">
+    <h2>Booking Saya</h2>
+    <div class="booking-tabs">
+      <div class="booking-tab active" onclick="switchTab(this,'all')">Semua</div>
+      <div class="booking-tab" onclick="switchTab(this,'confirmed')">Dikonfirmasi</div>
+      <div class="booking-tab" onclick="switchTab(this,'pending')">Menunggu</div>
+    </div>
+    <div class="booking-list">
+      <div class="booking-card" data-status="confirmed">
+        <div class="booking-card-header">
+          <div class="booking-room-name">Ruang Cendana</div>
+          <span class="cal-status status-confirmed">✓ Dikonfirmasi</span>
+        </div>
+        <div class="booking-meta">
+          <div class="booking-meta-item">📅 Senin, 6 Mei 2026</div>
+          <div class="booking-meta-item">🕐 09:00 – 11:00</div>
+          <div class="booking-meta-item">👥 6 Peserta</div>
+        </div>
+        <div class="booking-code">📄 MSP-482031</div>
+      </div>
+      <div class="booking-card" data-status="pending">
+        <div class="booking-card-header">
+          <div class="booking-room-name">Ruang Mahoni</div>
+          <span class="cal-status status-pending">⏳ Menunggu</span>
+        </div>
+        <div class="booking-meta">
+          <div class="booking-meta-item">📅 Rabu, 8 Mei 2026</div>
+          <div class="booking-meta-item">🕐 13:00 – 15:00</div>
+          <div class="booking-meta-item">👥 12 Peserta</div>
+        </div>
+        <div class="booking-code">📄 MSP-719204</div>
+      </div>
+      <div class="booking-card" data-status="confirmed">
+        <div class="booking-card-header">
+          <div class="booking-room-name">Ruang Emerald</div>
+          <span class="cal-status status-confirmed">✓ Dikonfirmasi</span>
+        </div>
+        <div class="booking-meta">
+          <div class="booking-meta-item">📅 Jum, 10 Mei 2026</div>
+          <div class="booking-meta-item">🕐 10:00 – 12:00</div>
+          <div class="booking-meta-item">👥 20 Peserta</div>
+        </div>
+        <div class="booking-code">📄 MSP-305882</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PROFILE VIEW -->
+<div class="view" id="view-profile">
+  <div class="profile-view">
+    <div class="profile-hero">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatarDisplay">BS</div>
+        <div class="profile-edit-btn" onclick="openEditProfile()">✏️</div>
+      </div>
+      <div class="profile-name" id="profileNameDisplay">Budi Santoso</div>
+      <div class="profile-role" id="profileRoleDisplay">Senior Marketing Manager</div>
+      <div class="profile-dept-badge" id="profileDeptDisplay">🏢 Marketing</div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="pstat">
+        <div class="pstat-num" id="pstatTotal">7</div>
+        <div class="pstat-label">Total Booking</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-num" id="pstatConfirmed" style="color:var(--green)">5</div>
+        <div class="pstat-label">Dikonfirmasi</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-num" id="pstatPending" style="color:var(--yellow)">2</div>
+        <div class="pstat-label">Menunggu</div>
+      </div>
+    </div>
+
+    <!-- Export to Spreadsheet -->
+    <div class="export-card">
+      <div class="export-icon">📊</div>
+      <div class="export-info">
+        <h4>Export ke Spreadsheet</h4>
+        <p>Unduh seluruh data booking &amp; profil sebagai file Excel</p>
+      </div>
+      <button class="btn-export" onclick="exportToCSV()">⬇️ Export</button>
+    </div>
+
+    <!-- Informasi Pribadi -->
+    <div class="profile-section">
+      <div class="profile-section-hdr">👤 Informasi Pribadi</div>
+      <div class="profile-field">
+        <span class="pfield-label">Nama Lengkap</span>
+        <span class="pfield-value" id="pfNama">Budi Santoso</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">NIK / ID</span>
+        <span class="pfield-value" id="pfNIK">EMP-2021-0042</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Jabatan</span>
+        <span class="pfield-value" id="pfJabatan">Sr. Marketing Manager</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Departemen</span>
+        <span class="pfield-value" id="pfDept">Marketing</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Bergabung</span>
+        <span class="pfield-value" id="pfBergabung">15 Maret 2021</span>
+      </div>
+    </div>
+
+    <!-- Kontak -->
+    <div class="profile-section">
+      <div class="profile-section-hdr">📬 Informasi Kontak</div>
+      <div class="profile-field">
+        <span class="pfield-label">Email</span>
+        <span class="pfield-value editable" id="pfEmail" onclick="openEditProfile()">budi@perusahaan.com</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Nomor HP</span>
+        <span class="pfield-value editable" id="pfHP" onclick="openEditProfile()">0812-3456-7890</span>
+      </div>
+    </div>
+
+    <!-- Database Koneksi -->
+    <div class="profile-section">
+      <div class="profile-section-hdr">🗄️ Koneksi Database</div>
+      <div class="profile-field">
+        <span class="pfield-label">Spreadsheet</span>
+        <span class="pfield-value" style="color:var(--green)">✅ Terhubung</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Sheet Aktif</span>
+        <span class="pfield-value">meetspace-database.xlsx</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Total Record</span>
+        <span class="pfield-value" id="pfTotalRecord">10 Booking</span>
+      </div>
+      <div class="profile-field">
+        <span class="pfield-label">Terakhir Sync</span>
+        <span class="pfield-value" id="pfLastSync">Baru saja</span>
+      </div>
+    </div>
+
+    <!-- Menu -->
+    <div class="profile-menu">
+      <div class="menu-item" onclick="openEditProfile()">
+        <div class="menu-icon" style="background:rgba(201,152,106,0.12)">✏️</div>
+        <div class="menu-text">
+          <strong>Edit Profil</strong>
+          <span>Ubah data pribadi dan kontak</span>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('📊 Sinkronisasi selesai!')">
+        <div class="menu-icon" style="background:rgba(61,184,122,0.12)">🔄</div>
+        <div class="menu-text">
+          <strong>Sinkronisasi Data</strong>
+          <span>Perbarui data dari spreadsheet</span>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showToast('🔔 Pengaturan notifikasi')">
+        <div class="menu-icon" style="background:rgba(139,116,216,0.12)">🔔</div>
+        <div class="menu-text">
+          <strong>Notifikasi</strong>
+          <span>Atur pengingat booking</span>
+        </div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item menu-danger" onclick="showToast('👋 Keluar dari akun...')">
+        <div class="menu-icon" style="background:rgba(229,90,90,0.1)">🚪</div>
+        <div class="menu-text">
+          <strong>Keluar</strong>
+          <span>Logout dari MeetSpace</span>
+        </div>
+        <div class="menu-arrow" style="color:var(--red)">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav">
+  <div class="bnav-item active" onclick="switchView('home',this)">
+    <div class="bnav-icon">🏠</div>
+    <div class="bnav-label">Beranda</div>
+  </div>
+  <div class="bnav-item" onclick="switchView('calendar',this)">
+    <div class="bnav-icon">📅</div>
+    <div class="bnav-label">Kalender</div>
+  </div>
+  <div class="bnav-item" onclick="switchView('bookings',this)">
+    <div class="bnav-icon">📋</div>
+    <div class="bnav-label">Booking</div>
+  </div>
+  <div class="bnav-item" onclick="switchView('profile',this)">
+    <div class="bnav-icon">👤</div>
+    <div class="bnav-label">Profil</div>
+  </div>
+</nav>
+
+<!-- ===== BOOKING MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+
+    <div class="modal-hero" id="modalHero">
+      <div class="modal-hero-bg" id="modalHeroBg"></div>
+      <div class="modal-hero-overlay"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-hero-info">
+        <h2 id="modalTitle"></h2>
+        <p id="modalSubloc"></p>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <!-- Info pills -->
+      <div class="info-pills">
+        <div class="info-pill"><label>Kapasitas</label><value id="mCap"></value></div>
+        <div class="info-pill"><label>Lantai</label><value id="mFloor"></value></div>
+        <div class="info-pill"><label>Status</label><value style="color:var(--green)">✓ Gratis</value></div>
+        <div class="info-pill"><label>Rating</label><value id="mRating"></value></div>
+      </div>
+
+      <!-- Facilities -->
+      <p class="modal-section-title">Fasilitas</p>
+      <div class="facility-pills" id="mFacilities"></div>
+
+      <!-- Monthly Calendar -->
+      <p class="modal-section-title">Pilih Tanggal</p>
+      <div class="modal-cal-header">
+        <span class="modal-cal-month" id="modalCalMonth"></span>
+        <div class="modal-cal-nav">
+          <button class="modal-cal-btn" onclick="modalCalNav(-1)">‹</button>
+          <button class="modal-cal-btn" onclick="modalCalNav(1)">›</button>
+        </div>
+      </div>
+      <div class="modal-cal-dow">
+        <span>Min</span><span>Sen</span><span>Sel</span>
+        <span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+      </div>
+      <div class="modal-cal-grid" id="modalCalGrid"></div>
+
+      <!-- Time Slots -->
+      <p class="modal-section-title">Pilih Slot Waktu</p>
+      <div class="time-slots" id="timeSlots"></div>
+
+      <!-- Form -->
+      <p class="modal-section-title">Data Pemesan</p>
+      <div class="form-group">
+        <label>Nama Penyelenggara</label>
+        <input type="text" placeholder="Nama lengkap" id="fName">
+      </div>
+      <div class="form-group">
+        <label>Departemen / Divisi</label>
+        <input type="text" placeholder="Contoh: Marketing" id="fDept">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="email@perusahaan.com" id="fEmail">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nomor HP</label>
+          <input type="tel" placeholder="08xx-xxxx" id="fPhone">
+        </div>
+        <div class="form-group">
+          <label>Peserta</label>
+          <input type="number" placeholder="0" min="1" id="fPax">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Agenda Meeting</label>
+        <textarea rows="3" placeholder="Jelaskan tujuan dan agenda rapat..." id="fAgenda"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Kebutuhan Tambahan</label>
+        <select id="fExtra">
+          <option>Tidak ada</option>
+          <option>Minta Catering</option>
+          <option>Minta Alat Tulis</option>
+          <option>Minta Notulen</option>
+        </select>
+      </div>
+
+      <!-- Summary -->
+      <div class="booking-summary" id="bookingSummary">
+        <div class="summary-row"><span>Tanggal</span><span id="sTanggal">—</span></div>
+        <div class="summary-row"><span>Durasi</span><span id="sDurasi">—</span></div>
+        <div class="summary-row"><span>Biaya</span><span id="sBiaya" style="color:var(--green);font-weight:700">GRATIS</span></div>
+      </div>
+
+      <button class="btn-confirm" onclick="confirmBooking()">🎯 Konfirmasi Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h2>Booking Berhasil!</h2>
+    <p>Ruangan telah dipesan. Konfirmasi akan dikirim ke email Anda.</p>
+    <div class="booking-code-box" id="bookingCode">MSP-000000</div>
+    <button class="btn-done" onclick="closeSuccess()">Selesai</button>
+  </div>
+</div>
+
+<!-- FILTER DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="handleDrawerClick(event)">
+  <div class="drawer">
+    <div class="drawer-handle"></div>
+    <h3>Filter Ruangan</h3>
+    <div class="filter-section">
+      <h4>Lantai</h4>
+      <div class="filter-chips-wrap">
+        <button class="fchip active" onclick="toggleFChip(this)">Semua</button>
+        <button class="fchip" onclick="toggleFChip(this)">Lt. 1</button>
+        <button class="fchip" onclick="toggleFChip(this)">Lt. 2</button>
+        <button class="fchip" onclick="toggleFChip(this)">Lt. 3</button>
+        <button class="fchip" onclick="toggleFChip(this)">Lt. 4</button>
+        <button class="fchip" onclick="toggleFChip(this)">Lt. 5</button>
+        <button class="fchip" onclick="toggleFChip(this)">Lt. 6</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <h4>Tipe Ruangan</h4>
+      <div class="filter-chips-wrap">
+        <button class="fchip active" onclick="toggleFChip(this)">Semua</button>
+        <button class="fchip" onclick="toggleFChip(this)">Kecil ≤8</button>
+        <button class="fchip" onclick="toggleFChip(this)">Sedang ≤20</button>
+        <button class="fchip" onclick="toggleFChip(this)">Besar 20+</button>
+        <button class="fchip" onclick="toggleFChip(this)">VIP</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <h4>Kapasitas Maks</h4>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
+        <span>1 orang</span><span id="capVal">50 orang</span>
+      </div>
+      <input type="range" min="1" max="50" value="50" style="width:100%;accent-color:var(--accent)"
+        oninput="document.getElementById('capVal').textContent=this.value+' orang'">
+    </div>
+    <div class="filter-section">
+      <h4>Fasilitas</h4>
+      <div class="facility-checks">
+        <label class="facility-check"><input type="checkbox" checked> Proyektor / Layar</label>
+        <label class="facility-check"><input type="checkbox" checked> WiFi Khusus</label>
+        <label class="facility-check"><input type="checkbox"> Whiteboard</label>
+        <label class="facility-check"><input type="checkbox"> Video Conference</label>
+        <label class="facility-check"><input type="checkbox"> Catering</label>
+        <label class="facility-check"><input type="checkbox"> Parkir Khusus</label>
+      </div>
+    </div>
+    <div class="drawer-actions">
+      <button class="btn-drawer-reset" onclick="showToast('🔄 Filter direset')">Reset</button>
+      <button class="btn-apply" onclick="closeDrawer();showToast('✅ Filter diterapkan')">Terapkan Filter</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="edit-overlay" id="editOverlay" onclick="handleEditClick(event)">
+  <div class="edit-sheet">
+    <div class="drawer-handle"></div>
+    <h3>✏️ Edit Profil</h3>
+    <div class="form-group">
+      <label>Nama Lengkap</label>
+      <input type="text" id="eNama" placeholder="Nama lengkap">
+    </div>
+    <div class="form-group">
+      <label>Jabatan</label>
+      <input type="text" id="eJabatan" placeholder="Jabatan / posisi">
+    </div>
+    <div class="form-group">
+      <label>Departemen</label>
+      <input type="text" id="eDept" placeholder="Departemen / divisi">
+    </div>
+    <div class="form-group">
+      <label>Email Kantor</label>
+      <input type="email" id="eEmail" placeholder="email@perusahaan.com">
+    </div>
+    <div class="form-group">
+      <label>Nomor HP</label>
+      <input type="tel" id="eHP" placeholder="08xx-xxxx-xxxx">
+    </div>
+    <div class="edit-actions">
+      <button class="btn-cancel-edit" onclick="closeEditProfile()">Batal</button>
+      <button class="btn-save-profile" onclick="saveProfile()">💾 Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== DATA ===== */
+const rooms = [
+  { title:"Ruang Cendana", loc:"Sayap Barat, Lantai 1", floor:"Lantai 1", cap:"8 orang", rating:"4.8 ⭐", bg:"room-bg-1", icon:"🏛️",
+    facilities:["📽 Proyektor HD","📶 WiFi 100Mbps","🎙 Mikrofon Nirkabel","❄️ AC Central","✏️ Whiteboard","☕ Pantry"] },
+  { title:"Ruang Mahoni", loc:"Sayap Timur, Lantai 2", floor:"Lantai 2", cap:"15 orang", rating:"4.7 ⭐", bg:"room-bg-2", icon:"🎯",
+    facilities:["🖥 Smart TV 75\"","📹 Video Conference","🍽 Catering","📶 WiFi Fiber","🖨 Printer","❄️ AC Central"] },
+  { title:"Ruang Laguna", loc:"Pusat, Lantai 3", floor:"Lantai 3", cap:"12 orang", rating:"4.9 ⭐", bg:"room-bg-3", icon:"🌊",
+    facilities:["📽 Proyektor 4K","✏️ Whiteboard 3x2m","❄️ AC VRF","📶 WiFi 200Mbps","🔌 Stop Kontak Banyak","🪑 Ergonomic Chair"] },
+  { title:"Ruang Emerald", loc:"Sayap Utara, Lantai 4", floor:"Lantai 4", cap:"25 orang", rating:"4.8 ⭐", bg:"room-bg-4", icon:"🌿",
+    facilities:["📹 VC 4K Codec","🎙 Soundsystem","🅿️ Parkir 4 Mobil","📽 Dual Proyektor","❄️ AC Multi Zone","🎉 Event Setup"] },
+  { title:"Ruang Amethyst VIP", loc:"Area Eksekutif, Lantai 5", floor:"Lantai 5 – VIP", cap:"10 orang", rating:"5.0 ⭐", bg:"room-bg-5", icon:"💎",
+    facilities:["👑 Executive Lounge","🍽 Full Catering","🔒 Akses Private","📹 Telepresence VC","🖥 Triple Display","🍹 Open Bar"] },
+  { title:"Aula Grand Panorama", loc:"Rooftop, Lantai 6", floor:"Lantai 6 – Rooftop", cap:"50 orang", rating:"4.9 ⭐", bg:"room-bg-6", icon:"🌅",
+    facilities:["🌇 View 360° Kota","🎤 Stage & Podium","📽 LED Wall 10x4m","🎵 Full Soundsystem","🅿️ Rooftop Parking","🎉 Event Setup"] },
+];
+
+/* Sample bookings for calendar */
+const sampleBookings = [
+  { date:'2026-05-06', room:'Ruang Cendana', time:'09:00–11:00', pax:6, status:'confirmed', code:'MSP-482031' },
+  { date:'2026-05-08', room:'Ruang Mahoni',  time:'13:00–15:00', pax:12, status:'pending',   code:'MSP-719204' },
+  { date:'2026-05-10', room:'Ruang Emerald', time:'10:00–12:00', pax:20, status:'confirmed', code:'MSP-305882' },
+  { date:'2026-05-15', room:'Ruang Laguna',  time:'08:00–10:00', pax:8,  status:'confirmed', code:'MSP-213901' },
+  { date:'2026-05-20', room:'Amethyst VIP',  time:'14:00–16:00', pax:5,  status:'confirmed', code:'MSP-674522' },
+  { date:'2026-05-22', room:'Grand Panorama',time:'09:00–12:00', pax:40, status:'pending',   code:'MSP-841033' },
+  { date:'2026-05-04', room:'Ruang Cendana', time:'10:00–11:00', pax:4,  status:'confirmed', code:'MSP-100111' },
+];
+
+/* ===== VIEW SWITCHING ===== */
+let activeView = 'home';
+function switchView(viewId, trigger) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewId).classList.add('active');
+  activeView = viewId;
+
+  // bottom nav active
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  if (trigger && trigger.classList.contains('bnav-item')) trigger.classList.add('active');
+
+  // desktop nav active
+  document.querySelectorAll('.top-nav-desktop-links a').forEach(a => a.classList.remove('active'));
+  if (trigger && trigger.tagName === 'A') trigger.classList.add('active');
+
+  if (viewId === 'calendar') buildMainCalendar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ===== CHIP TOGGLE ===== */
+function toggleChip(el) { el.classList.toggle('active'); }
+function toggleFChip(el) { el.classList.toggle('active'); }
+
+/* ===== FILTER DRAWER ===== */
+function openDrawer() {
+  document.getElementById('drawerOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function handleDrawerClick(e) {
+  if (e.target === document.getElementById('drawerOverlay')) closeDrawer();
+}
+
+/* ===== MAIN CALENDAR ===== */
+let mainCalYear = 2026, mainCalMonth = 4; // 0-indexed, 4 = May
+let mainCalSelected = null;
+
+function buildMainCalendar() {
+  const today = new Date(2026, 4, 4); // fixed "today" for demo
+  const firstDay = new Date(mainCalYear, mainCalMonth, 1).getDay();
+  const daysInMonth = new Date(mainCalYear, mainCalMonth + 1, 0).getDate();
+  const daysInPrev = new Date(mainCalYear, mainCalMonth, 0).getDate();
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  document.getElementById('calTitle').innerHTML = months[mainCalMonth] + ' <span>' + mainCalYear + '</span>';
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  // booking dates set
+  const bookingDates = new Set(sampleBookings.map(b => b.date));
+
+  // Prev month fill
+  for (let i = 0; i < firstDay; i++) {
+    const d = daysInPrev - firstDay + 1 + i;
+    const cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    const dn = document.createElement('div'); dn.className = 'day-num'; dn.textContent = d;
+    cell.appendChild(dn);
+    grid.appendChild(cell);
+  }
+
+  // Current month days
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = mainCalYear + '-' + String(mainCalMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+
+    const isToday = (mainCalYear === today.getFullYear() && mainCalMonth === today.getMonth() && d === today.getDate());
+    const isSelected = mainCalSelected === dateStr;
+    const hasBooking = bookingDates.has(dateStr);
+
+    if (isToday) cell.classList.add('today');
+    if (isSelected) cell.classList.add('selected');
+    if (hasBooking) cell.classList.add('has-booking');
+
+    const dn = document.createElement('div'); dn.className = 'day-num'; dn.textContent = d;
+    cell.appendChild(dn);
+
+    if (hasBooking) {
+      const dots = document.createElement('div'); dots.className = 'day-dots';
+      const dot = document.createElement('div'); dot.className = 'day-dot';
+      dot.style.background = 'var(--accent2)';
+      dots.appendChild(dot);
+      cell.appendChild(dots);
+    }
+
+    cell.onclick = () => selectCalDay(dateStr, cell);
+    grid.appendChild(cell);
+  }
+
+  // Fill remaining
+  const total = firstDay + daysInMonth;
+  const remain = 7 - (total % 7 === 0 ? 7 : total % 7);
+  for (let i = 1; i <= remain && remain < 7; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    const dn = document.createElement('div'); dn.className = 'day-num'; dn.textContent = i;
+    cell.appendChild(dn);
+    grid.appendChild(cell);
+  }
+
+  // Show bookings for selected or today
+  const showDate = mainCalSelected || (mainCalYear + '-0' + (mainCalMonth+1) + '-04').replace('-0','-').replace(/(\d{4})-(\d)-/,'$1-0$2-');
+  renderCalBookings(showDate);
+}
+
+function selectCalDay(dateStr, cell) {
+  mainCalSelected = dateStr;
+  document.querySelectorAll('#calGrid .cal-day').forEach(c => c.classList.remove('selected'));
+  cell.classList.add('selected');
+  renderCalBookings(dateStr);
+}
+
+function renderCalBookings(dateStr) {
+  const container = document.getElementById('calBookings');
+  const dayBookings = sampleBookings.filter(b => b.date === dateStr);
+  const d = new Date(dateStr + 'T00:00:00');
+  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const label = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+
+  container.innerHTML = '<div class="cal-bookings-title">📋 Booking — ' + label + '</div>';
+
+  if (dayBookings.length === 0) {
+    container.innerHTML += '<div style="color:var(--muted);font-size:13px;padding:16px;text-align:center;background:var(--surface);border-radius:12px;">Tidak ada booking pada hari ini</div>';
+    return;
+  }
+
+  dayBookings.forEach(b => {
+    const cls = b.status === 'confirmed' ? '' : b.status === 'pending' ? 'pending' : 'cancelled';
+    const statusLabel = b.status === 'confirmed' ? '<span class="cal-status status-confirmed">✓ Dikonfirmasi</span>' :
+                        b.status === 'pending'   ? '<span class="cal-status status-pending">⏳ Menunggu</span>' :
+                        '<span class="cal-status status-cancelled">✕ Dibatalkan</span>';
+    container.innerHTML += `
+      <div class="cal-booking-item ${cls}">
+        <div class="cal-booking-info">
+          <div class="cal-booking-room">${b.room}</div>
+          <div class="cal-booking-time">
+            <span>🕐 ${b.time}</span>
+            <span>👥 ${b.pax} peserta</span>
+            <span>📄 ${b.code}</span>
+          </div>
+        </div>
+        ${statusLabel}
+      </div>`;
+  });
+}
+
+function calNav(dir) {
+  mainCalMonth += dir;
+  if (mainCalMonth < 0) { mainCalMonth = 11; mainCalYear--; }
+  if (mainCalMonth > 11) { mainCalMonth = 0; mainCalYear++; }
+  buildMainCalendar();
+}
+
+/* ===== MODAL CALENDAR ===== */
+let modalCalYear = 2026, modalCalMonth = 4;
+let modalSelectedDate = null;
+let selectedSlots = [];
+const allSlots = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+const unavailMap = { 0:[1,2], 1:[3,4,5], 2:[], 3:[0,1], 4:[7], 5:[2,3,4] };
+
+function buildModalCalendar(roomIdx) {
+  const today = new Date(2026, 4, 4);
+  const firstDay = new Date(modalCalYear, modalCalMonth, 1).getDay();
+  const daysInMonth = new Date(modalCalYear, modalCalMonth + 1, 0).getDate();
+  const daysInPrev = new Date(modalCalYear, modalCalMonth, 0).getDate();
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  document.getElementById('modalCalMonth').textContent = months[modalCalMonth] + ' ' + modalCalYear;
+
+  const grid = document.getElementById('modalCalGrid');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < firstDay; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'modal-cal-day empty';
+    grid.appendChild(cell);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'modal-cal-day';
+    cell.textContent = d;
+
+    const isPast = (modalCalYear < today.getFullYear()) ||
+      (modalCalYear === today.getFullYear() && modalCalMonth < today.getMonth()) ||
+      (modalCalYear === today.getFullYear() && modalCalMonth === today.getMonth() && d < today.getDate());
+    const isToday = (modalCalYear === today.getFullYear() && modalCalMonth === today.getMonth() && d === today.getDate());
+    const dateStr = modalCalYear + '-' + String(modalCalMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isSelected = modalSelectedDate === dateStr;
+
+    if (isPast) { cell.classList.add('past'); }
+    else if (isToday) { cell.classList.add('today'); }
+    if (isSelected) { cell.classList.add('selected'); }
+
+    if (!isPast) {
+      cell.onclick = () => {
+        modalSelectedDate = dateStr;
+        grid.querySelectorAll('.modal-cal-day').forEach(c => {
+          c.classList.remove('selected');
+          if (!c.classList.contains('today')) c.style.background = '';
+        });
+        cell.classList.add('selected');
+        updateSummary();
+      };
+    }
+    grid.appendChild(cell);
+  }
+
+  // fill trailing
+  const total = firstDay + daysInMonth;
+  const remain = 7 - (total % 7 === 0 ? 7 : total % 7);
+  for (let i = 1; i <= remain && remain < 7; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'modal-cal-day other-month';
+    cell.textContent = i;
+    grid.appendChild(cell);
+  }
+}
+
+function modalCalNav(dir) {
+  modalCalMonth += dir;
+  if (modalCalMonth < 0) { modalCalMonth = 11; modalCalYear--; }
+  if (modalCalMonth > 11) { modalCalMonth = 0; modalCalYear++; }
+  buildModalCalendar(currentRoomIdx);
+}
+
+/* ===== OPEN MODAL ===== */
+let currentRoomIdx = 0;
+
+function openModal(idx) {
+  currentRoomIdx = idx;
+  selectedSlots = [];
+  modalSelectedDate = null;
+  modalCalYear = 2026; modalCalMonth = 4;
+
+  const room = rooms[idx];
+  document.getElementById('modalTitle').textContent = room.title;
+  document.getElementById('modalSubloc').textContent = '📍 ' + room.loc;
+  document.getElementById('mCap').textContent = room.cap;
+  document.getElementById('mFloor').textContent = room.floor;
+  document.getElementById('mRating').textContent = room.rating;
+
+  const bg = document.getElementById('modalHeroBg');
+  bg.className = 'modal-hero-bg ' + room.bg;
+  bg.textContent = room.icon;
+
+  document.getElementById('mFacilities').innerHTML =
+    room.facilities.map(f => `<div class="fac-pill">${f}</div>`).join('');
+
+  buildModalCalendar(idx);
+  buildTimeSlots(idx);
+  updateSummary();
+
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+/* ===== TIME SLOTS ===== */
+function buildTimeSlots(roomIdx) {
+  const container = document.getElementById('timeSlots');
+  const unavail = unavailMap[roomIdx] || [];
+  container.innerHTML = allSlots.map((t, i) => {
+    const isUnavail = unavail.includes(i);
+    return `<div class="time-slot${isUnavail ? ' unavail' : ''}" ${isUnavail ? '' : `onclick="toggleSlot(this,'${t}')"`}>${t}</div>`;
+  }).join('');
+}
+
+function toggleSlot(el, time) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) { selectedSlots.push(time); }
+  else { selectedSlots = selectedSlots.filter(s => s !== time); }
+  updateSummary();
+}
+
+/* ===== SUMMARY ===== */
+function updateSummary() {
+  const dur = selectedSlots.length;
+  if (modalSelectedDate) {
+    const d = new Date(modalSelectedDate + 'T00:00:00');
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    document.getElementById('sTanggal').textContent = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  } else {
+    document.getElementById('sTanggal').textContent = '—';
+  }
+  document.getElementById('sDurasi').textContent = dur > 0 ? dur + ' jam' : '—';
+}
+
+/* ===== CONFIRM BOOKING ===== */
+function confirmBooking() {
+  const name = document.getElementById('fName').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  if (!name)  { showToast('⚠️ Mohon isi nama penyelenggara'); return; }
+  if (!email) { showToast('⚠️ Mohon isi alamat email'); return; }
+  if (!modalSelectedDate) { showToast('⚠️ Mohon pilih tanggal terlebih dahulu'); return; }
+  if (selectedSlots.length === 0) { showToast('⚠️ Mohon pilih minimal 1 slot waktu'); return; }
+
+  closeModal();
+  const code = 'MSP-' + Math.floor(100000 + Math.random() * 900000);
+  document.getElementById('bookingCode').textContent = code;
+  setTimeout(() => {
+    document.getElementById('successOverlay').classList.add('active');
+  }, 150);
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('active');
+  showToast('🎉 Booking berhasil dikonfirmasi!');
+}
+
+/* ===== BOOKING TABS ===== */
+function switchTab(el, filter) {
+  document.querySelectorAll('.booking-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.booking-card').forEach(card => {
+    const status = card.dataset.status;
+    card.style.display = (filter === 'all' || status === filter) ? '' : 'none';
+  });
+}
+
+/* ===== TOAST ===== */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ===== INIT ===== */
+buildMainCalendar();
+
+/* ===== PROFILE ===== */
+let profileData = {
+  nama: 'Budi Santoso',
+  jabatan: 'Senior Marketing Manager',
+  dept: 'Marketing',
+  nik: 'EMP-2021-0042',
+  email: 'budi@perusahaan.com',
+  hp: '0812-3456-7890',
+  bergabung: '15 Maret 2021'
+};
+
+// All bookings in DB (simulated spreadsheet rows)
+const allBookings = [
+  { code:'MSP-482031', room:'Ruang Cendana',      date:'2026-05-06', start:'09:00', end:'11:00', pax:6,  status:'Dikonfirmasi', name:'Budi Santoso',     dept:'Marketing',  email:'budi@perusahaan.com' },
+  { code:'MSP-719204', room:'Ruang Mahoni',        date:'2026-05-08', start:'13:00', end:'15:00', pax:12, status:'Menunggu',     name:'Sari Dewi',        dept:'Finance',    email:'sari@perusahaan.com' },
+  { code:'MSP-305882', room:'Ruang Emerald',       date:'2026-05-10', start:'10:00', end:'12:00', pax:20, status:'Dikonfirmasi', name:'Ahmad Rizal',      dept:'Engineering',email:'ahmad@perusahaan.com' },
+  { code:'MSP-213901', room:'Ruang Laguna',        date:'2026-05-15', start:'08:00', end:'10:00', pax:8,  status:'Dikonfirmasi', name:'Rina Kusuma',      dept:'HR',         email:'rina@perusahaan.com' },
+  { code:'MSP-674522', room:'Ruang Amethyst VIP',  date:'2026-05-20', start:'14:00', end:'16:00', pax:5,  status:'Dikonfirmasi', name:'Doni Pratama',     dept:'Direksi',    email:'doni@perusahaan.com' },
+  { code:'MSP-841033', room:'Aula Grand Panorama', date:'2026-05-22', start:'09:00', end:'12:00', pax:40, status:'Menunggu',     name:'Yeni Safitri',     dept:'Operations', email:'yeni@perusahaan.com' },
+  { code:'MSP-100111', room:'Ruang Cendana',       date:'2026-05-04', start:'10:00', end:'11:00', pax:4,  status:'Dikonfirmasi', name:'Budi Santoso',     dept:'Marketing',  email:'budi@perusahaan.com' },
+  { code:'MSP-392847', room:'Ruang Mahoni',        date:'2026-05-25', start:'11:00', end:'13:00', pax:10, status:'Dikonfirmasi', name:'Citra Lestari',    dept:'Legal',      email:'citra@perusahaan.com' },
+  { code:'MSP-571028', room:'Ruang Laguna',        date:'2026-05-27', start:'09:00', end:'11:00', pax:7,  status:'Dibatalkan',   name:'Hendra Wijaya',    dept:'IT',         email:'hendra@perusahaan.com' },
+  { code:'MSP-663910', room:'Ruang Emerald',       date:'2026-05-28', start:'14:00', end:'17:00', pax:18, status:'Menunggu',     name:'Putri Handayani',  dept:'Sales',      email:'putri@perusahaan.com' },
+];
+
+function renderProfile() {
+  document.getElementById('profileNameDisplay').textContent = profileData.nama;
+  document.getElementById('profileRoleDisplay').textContent = profileData.jabatan;
+  document.getElementById('profileDeptDisplay').textContent = '🏢 ' + profileData.dept;
+  // Avatar initials
+  const initials = profileData.nama.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('profileAvatarDisplay').textContent = initials;
+  // Fields
+  document.getElementById('pfNama').textContent = profileData.nama;
+  document.getElementById('pfNIK').textContent = profileData.nik;
+  document.getElementById('pfJabatan').textContent = profileData.jabatan;
+  document.getElementById('pfDept').textContent = profileData.dept;
+  document.getElementById('pfBergabung').textContent = profileData.bergabung;
+  document.getElementById('pfEmail').textContent = profileData.email;
+  document.getElementById('pfHP').textContent = profileData.hp;
+  // Stats: filter by name
+  const myBookings = allBookings.filter(b => b.name === profileData.nama);
+  document.getElementById('pstatTotal').textContent = myBookings.length;
+  document.getElementById('pstatConfirmed').textContent = myBookings.filter(b=>b.status==='Dikonfirmasi').length;
+  document.getElementById('pstatPending').textContent = myBookings.filter(b=>b.status==='Menunggu').length;
+  document.getElementById('pfTotalRecord').textContent = allBookings.length + ' Booking';
+  document.getElementById('pfLastSync').textContent = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+}
+
+function openEditProfile() {
+  document.getElementById('eNama').value = profileData.nama;
+  document.getElementById('eJabatan').value = profileData.jabatan;
+  document.getElementById('eDept').value = profileData.dept;
+  document.getElementById('eEmail').value = profileData.email;
+  document.getElementById('eHP').value = profileData.hp;
+  document.getElementById('editOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditProfile() {
+  document.getElementById('editOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleEditClick(e) {
+  if (e.target === document.getElementById('editOverlay')) closeEditProfile();
+}
+
+function saveProfile() {
+  const nama = document.getElementById('eNama').value.trim();
+  if (!nama) { showToast('⚠️ Nama tidak boleh kosong'); return; }
+  profileData.nama = nama;
+  profileData.jabatan = document.getElementById('eJabatan').value.trim() || profileData.jabatan;
+  profileData.dept = document.getElementById('eDept').value.trim() || profileData.dept;
+  profileData.email = document.getElementById('eEmail').value.trim() || profileData.email;
+  profileData.hp = document.getElementById('eHP').value.trim() || profileData.hp;
+  closeEditProfile();
+  renderProfile();
+  showToast('✅ Profil berhasil disimpan!');
+}
+
+/* ===== EXPORT TO CSV (simulates spreadsheet export) ===== */
+function exportToCSV() {
+  showToast('📊 Menyiapkan export data...');
+  
+  // Sheet 1: Profile
+  let csvProfile = 'PROFIL PENGGUNA\n';
+  csvProfile += 'Nama Lengkap,' + profileData.nama + '\n';
+  csvProfile += 'Jabatan,' + profileData.jabatan + '\n';
+  csvProfile += 'Departemen,' + profileData.dept + '\n';
+  csvProfile += 'NIK,' + profileData.nik + '\n';
+  csvProfile += 'Email,' + profileData.email + '\n';
+  csvProfile += 'Nomor HP,' + profileData.hp + '\n';
+  csvProfile += 'Bergabung,' + profileData.bergabung + '\n\n';
+
+  // Sheet 2: Bookings
+  csvProfile += 'DATA BOOKING RUANGAN\n';
+  csvProfile += 'Kode Booking,Nama Ruangan,Tanggal,Waktu Mulai,Waktu Selesai,Jumlah Peserta,Status,Nama Pemesan,Departemen,Email\n';
+  allBookings.forEach(b => {
+    csvProfile += [b.code, b.room, b.date, b.start, b.end, b.pax, b.status, b.name, b.dept, b.email].join(',') + '\n';
+  });
+
+  // Download
+  const blob = new Blob([csvProfile], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'meetspace-database-' + new Date().toISOString().slice(0,10) + '.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+  setTimeout(() => showToast('✅ File CSV berhasil diunduh!'), 1000);
+}
+
+/* init profile */
+renderProfile();
+
+</script>
+</body>
+</html>

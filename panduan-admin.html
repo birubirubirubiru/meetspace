@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Admin — MeetSpace</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #0F1623;
+  --ink2:    #2A3244;
+  --paper:   #F9F6F1;
+  --paper2:  #F0EBE2;
+  --rule:    #DDD7CC;
+  --gold:    #C4933A;
+  --gold2:   #E8B96A;
+  --teal:    #1A7F74;
+  --teal2:   #2CB5A6;
+  --red:     #C1392B;
+  --amber:   #D4820A;
+  --blue:    #1B4FBF;
+  --white:   #FFFFFF;
+  --sidebar-w: 280px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--paper2); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+/* ══════════════════════════════════════════════
+   TOP HEADER
+══════════════════════════════════════════════ */
+.top-header {
+  background: var(--ink);
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+.th-left { display: flex; align-items: center; gap: 14px; }
+.th-logo {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 17px;
+  color: var(--gold);
+  letter-spacing: 0.3px;
+}
+.th-logo span { color: #fff; }
+.th-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.15); }
+.th-title { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 500; }
+.th-badge {
+  background: rgba(196,147,58,0.18);
+  border: 1px solid rgba(196,147,58,0.4);
+  color: var(--gold2);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+/* ── PROGRESS BAR ── */
+.reading-bar {
+  height: 3px;
+  background: var(--rule);
+  position: sticky;
+  top: 56px;
+  z-index: 299;
+}
+.reading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--teal2));
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* ══════════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════════ */
+.page-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: calc(100vh - 59px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--ink);
+  padding: 28px 0 40px;
+  position: sticky;
+  top: 59px;
+  height: calc(100vh - 59px);
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+.sidebar-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+.sidebar-group { margin-bottom: 28px; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.52);
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+  text-decoration: none;
+  font-weight: 500;
+}
+.nav-link:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.04); }
+.nav-link.active { color: var(--gold2); border-left-color: var(--gold); background: rgba(196,147,58,0.08); }
+.nav-link .nl-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-step {
+  font-size: 9px;
+  background: rgba(255,255,255,0.08);
+  padding: 2px 6px;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.3);
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.nav-link.active .nav-step { background: rgba(196,147,58,0.2); color: var(--gold2); }
+
+.sidebar-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  margin: 4px 20px 20px;
+}
+
+/* Progress ring */
+.progress-ring-wrap {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.progress-ring {
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+}
+.progress-ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 3; }
+.progress-ring-fill {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 113;
+  stroke-dashoffset: 113;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.progress-text-wrap { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.progress-pct { font-size: 18px; font-weight: 700; color: var(--gold2); font-family: 'IBM Plex Mono', monospace; }
+
+/* ── MAIN CONTENT ── */
+.main {
+  padding: 52px 64px 100px;
+  max-width: 860px;
+}
+
+/* ══════════════════════════════════════════════
+   SECTIONS
+══════════════════════════════════════════════ */
+.section { margin-bottom: 72px; }
+
+/* Chapter heading */
+.chapter-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.chapter-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+.chapter-rule { flex: 1; height: 1px; background: var(--rule); }
+
+.chapter-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 32px;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.chapter-sub {
+  font-size: 15px;
+  color: #6B7585;
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+/* ── INTRO HERO ── */
+.intro-hero {
+  background: var(--ink);
+  border-radius: 16px;
+  padding: 40px 44px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.intro-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(196,147,58,0.15), transparent 70%);
+}
+.intro-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 30%;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(26,127,116,0.12), transparent 70%);
+}
+.intro-hero h2 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 26px;
+  color: #fff;
+  margin-bottom: 12px;
+  position: relative;
+}
+.intro-hero h2 em { color: var(--gold2); font-style: normal; }
+.intro-hero p { color: rgba(255,255,255,0.55); font-size: 14px; line-height: 1.75; max-width: 520px; position: relative; }
+
+.role-pills {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+  position: relative;
+}
+.role-pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.role-pill.admin { background: rgba(196,147,58,0.18); border-color: rgba(196,147,58,0.35); color: var(--gold2); }
+
+/* ── STEP BLOCK ── */
+.step-block {
+  margin-bottom: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--white);
+}
+.step-head {
+  padding: 16px 20px;
+  background: var(--paper2);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.step-num-badge {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--gold2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-head-text h4 { font-size: 15px; font-weight: 700; color: var(--ink); }
+.step-head-text p { font-size: 12px; color: #8A8F9E; margin-top: 1px; }
+.step-body { padding: 20px 22px; }
+.step-body p { font-size: 14px; color: #3A3F52; line-height: 1.75; margin-bottom: 12px; }
+.step-body p:last-child { margin-bottom: 0; }
+
+/* ── UI MOCKUP ── */
+.ui-mockup {
+  background: #F4F6F9;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+.mockup-bar {
+  background: #E8EBF0;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.m-dot { width: 10px; height: 10px; border-radius: 50%; }
+.m-url { flex: 1; background: #fff; border-radius: 5px; padding: 4px 12px; font-size: 11px; color: #8A8F9E; font-family: 'IBM Plex Mono', monospace; }
+.mockup-content { padding: 20px; }
+
+/* Admin panel mockup */
+.admin-panel {
+  background: var(--ink);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ap-nav {
+  background: #0A0F1A;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ap-logo-m {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 14px;
+  color: var(--gold);
+}
+.ap-logo-m span { color: #fff; }
+.ap-badge-m {
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+.ap-nav-items { display: flex; gap: 4px; margin-left: auto; }
+.ap-nav-item {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+}
+.ap-nav-item.active { background: rgba(196,147,58,0.18); color: var(--gold2); }
+
+.ap-body {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+}
+.ap-sidebar-m {
+  background: #111827;
+  padding: 14px 0;
+}
+.ap-menu-item {
+  padding: 8px 14px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+.ap-menu-item.active { background: rgba(196,147,58,0.1); color: var(--gold2); }
+
+.ap-content { padding: 14px; background: #1A2035; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 10px;
+  margin: 16px 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.callout-tip  { background: rgba(26,127,116,0.07); border: 1px solid rgba(26,127,116,0.2); }
+.callout-warn { background: rgba(212,130,10,0.07); border: 1px solid rgba(212,130,10,0.2); }
+.callout-info { background: rgba(27,79,191,0.07); border: 1px solid rgba(27,79,191,0.2); }
+.callout-danger { background: rgba(193,57,43,0.07); border: 1px solid rgba(193,57,43,0.2); }
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout strong { display: block; margin-bottom: 3px; }
+
+/* ── INLINE CODE ── */
+code {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--teal);
+}
+
+/* ── CHECKLIST ── */
+.interactive-checklist { margin-top: 8px; }
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--white);
+}
+.check-row:hover { background: var(--paper2); }
+.check-row.done { background: rgba(26,127,116,0.05); border-color: rgba(26,127,116,0.25); }
+.check-box-ui {
+  width: 22px; height: 22px;
+  border: 2px solid var(--rule);
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  transition: all 0.15s;
+  margin-top: 1px;
+}
+.check-row.done .check-box-ui { background: var(--teal); border-color: var(--teal); color: #fff; }
+.check-label { flex: 1; }
+.check-label strong { display: block; font-size: 14px; color: var(--ink); }
+.check-label span { font-size: 12px; color: #8A8F9E; line-height: 1.5; }
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.data-table th {
+  background: var(--ink);
+  color: var(--gold2);
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.data-table th:first-child { border-radius: 8px 0 0 0; }
+.data-table th:last-child { border-radius: 0 8px 0 0; }
+.data-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink2);
+  vertical-align: top;
+}
+.data-table tr:nth-child(even) td { background: var(--paper2); }
+.data-table tr:last-child td { border-bottom: none; }
+
+/* status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-green  { background: rgba(26,127,116,0.1); color: var(--teal); border: 1px solid rgba(26,127,116,0.25); }
+.badge-amber  { background: rgba(212,130,10,0.1); color: var(--amber); border: 1px solid rgba(212,130,10,0.25); }
+.badge-red    { background: rgba(193,57,43,0.1); color: var(--red); border: 1px solid rgba(193,57,43,0.25); }
+.badge-blue   { background: rgba(27,79,191,0.1); color: var(--blue); border: 1px solid rgba(27,79,191,0.25); }
+
+/* ── FLOW DIAGRAM ── */
+.flow-wrap {
+  background: var(--ink);
+  border-radius: 14px;
+  padding: 28px;
+  margin: 20px 0;
+}
+.flow-title { font-size: 12px; color: rgba(255,255,255,0.35); font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px; }
+.flow-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.flow-step {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  text-align: center;
+  flex: 1;
+  min-width: 100px;
+}
+.flow-step-icon { font-size: 22px; margin-bottom: 6px; }
+.flow-step-label { font-size: 11px; color: rgba(255,255,255,0.55); font-weight: 500; }
+.flow-arrow { color: var(--gold2); font-size: 18px; flex-shrink: 0; }
+.flow-step.highlight {
+  background: rgba(196,147,58,0.15);
+  border-color: rgba(196,147,58,0.35);
+}
+.flow-step.highlight .flow-step-label { color: var(--gold2); }
+
+/* ── KEYBOARD ── */
+kbd {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-bottom: 2px solid #C5BEB3;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink);
+}
+
+/* ── GRID 2 ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+
+/* ── MINI CARD ── */
+.mini-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.mini-card-icon { font-size: 24px; margin-bottom: 8px; }
+.mini-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+.mini-card p { font-size: 12px; color: #6B7585; line-height: 1.55; }
+
+/* ── ROOM ENTRY FORM MOCKUP ── */
+.form-mockup {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+.fm-header {
+  background: var(--paper2);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fm-body { padding: 18px; }
+.fm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.fm-field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #8A8F9E;
+  margin-bottom: 6px;
+}
+.fm-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--rule);
+  border-radius: 8px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--paper);
+  pointer-events: none;
+}
+.fm-input.filled { background: var(--white); border-color: var(--teal); color: var(--ink); }
+.fm-checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.fm-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  background: var(--paper2);
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+}
+.fm-check.on { background: rgba(26,127,116,0.08); border-color: var(--teal); color: var(--teal); }
+.fm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.fm-btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.fm-btn-cancel { background: var(--paper2); color: #8A8F9E; border: 1px solid var(--rule); }
+.fm-btn-save { background: var(--ink); color: var(--gold2); }
+
+/* ── BOOKING TABLE MOCKUP ── */
+.booking-row-m {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px;
+}
+.booking-row-m:last-child { border-bottom: none; }
+.brm-code { font-family: 'IBM Plex Mono', monospace; color: var(--gold2); font-size: 11px; width: 90px; flex-shrink: 0; }
+.brm-room { color: rgba(255,255,255,0.7); flex: 1; }
+.brm-date { color: rgba(255,255,255,0.4); font-size: 11px; width: 80px; flex-shrink: 0; }
+.brm-status { flex-shrink: 0; }
+.brm-actions { display: flex; gap: 5px; flex-shrink: 0; }
+.brm-btn {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.brm-btn-ok { background: rgba(26,127,116,0.2); color: var(--teal2); }
+.brm-btn-reject { background: rgba(193,57,43,0.15); color: #E05A4E; }
+
+/* ── SECTION DIVIDER ── */
+.sec-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 48px 0 40px;
+}
+.sec-divider::before, .sec-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+.sec-divider-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: #B0ABA2;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+/* ── SUMMARY BOX ── */
+.summary-box {
+  background: linear-gradient(135deg, var(--ink), #1E2D48);
+  border-radius: 16px;
+  padding: 32px 36px;
+  margin-top: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.summary-box::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(196,147,58,0.12), transparent 70%);
+}
+.summary-box h3 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 16px;
+  position: relative;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  position: relative;
+}
+.summary-item {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 14px;
+}
+.summary-item-icon { font-size: 20px; margin-bottom: 6px; }
+.summary-item h4 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+.summary-item p { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* ── NUMBERED LIST ── */
+.num-list { counter-reset: nlist; padding: 0; }
+.num-item {
+  counter-increment: nlist;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.num-item:last-child { border-bottom: none; }
+.num-item::before {
+  content: counter(nlist, decimal-leading-zero);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 26px;
+}
+.num-item-text { flex: 1; }
+.num-item-text strong { display: block; font-size: 14px; margin-bottom: 3px; color: var(--ink); }
+.num-item-text span { font-size: 13px; color: #6B7585; line-height: 1.6; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  padding: 20px 48px;
+  font-size: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+footer strong { color: var(--gold); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .page-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 32px 20px 80px; }
+  .chapter-title { font-size: 24px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .fm-row { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: 1fr; }
+  .ap-body { grid-template-columns: 1fr; }
+  .ap-sidebar-m { display: none; }
+  .flow-arrow { display: none; }
+  .flow-steps { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header class="top-header">
+  <div class="th-left">
+    <div class="th-logo">Meet<span>Space</span></div>
+    <div class="th-divider"></div>
+    <div class="th-title">Panduan Operasional Admin</div>
+  </div>
+  <div class="th-badge">ADMIN GUIDE v1.0</div>
+</header>
+
+<!-- READING PROGRESS -->
+<div class="reading-bar"><div class="reading-bar-fill" id="readBar"></div></div>
+
+<!-- LAYOUT -->
+<div class="page-layout">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div class="sidebar-group">
+      <div class="sidebar-label">Pengantar</div>
+      <a class="nav-link active" href="#intro" onclick="setActive(this)">
+        <span class="nl-icon">📖</span> Tentang Panduan
+        <span class="nav-step">00</span>
+      </a>
+      <a class="nav-link" href="#akses" onclick="setActive(this)">
+        <span class="nl-icon">🔐</span> Akses Admin Panel
+        <span class="nav-step">01</span>
+      </a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-label">Kelola Ruangan</div>
+      <a class="nav-link" href="#tambah-ruangan" onclick="setActive(this)">
+        <span class="nl-icon">➕</span> Tambah Ruangan
+        <span class="nav-step">02</span>
+      </a>
+      <a class="nav-link" href="#edit-ruangan" onclick="setActive(this)">
+        <span class="nl-icon">✏️</span> Edit & Nonaktifkan
+        <span class="nav-step">03</span>
+      </a>
+      <a class="nav-link" href="#slot-waktu" onclick="setActive(this)">
+        <span class="nl-icon">🕐</span> Kelola Slot Waktu
+        <span class="nav-step">04</span>
+      </a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-label">Kelola Booking</div>
+      <a class="nav-link" href="#lihat-booking" onclick="setActive(this)">
+        <span class="nl-icon">📋</span> Lihat Semua Booking
+        <span class="nav-step">05</span>
+      </a>
+      <a class="nav-link" href="#konfirmasi" onclick="setActive(this)">
+        <span class="nl-icon">✅</span> Konfirmasi Booking
+        <span class="nav-step">06</span>
+      </a>
+      <a class="nav-link" href="#tolak-booking" onclick="setActive(this)">
+        <span class="nl-icon">❌</span> Tolak & Batalkan
+        <span class="nav-step">07</span>
+      </a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-label">Spreadsheet</div>
+      <a class="nav-link" href="#spreadsheet" onclick="setActive(this)">
+        <span class="nl-icon">📊</span> Sinkronisasi Data
+        <span class="nav-step">08</span>
+      </a>
+      <a class="nav-link" href="#ringkasan" onclick="setActive(this)">
+        <span class="nl-icon">🏁</span> Ringkasan
+        <span class="nav-step">09</span>
+      </a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- Progress ring -->
+    <div class="progress-ring-wrap">
+      <svg class="progress-ring" viewBox="0 0 40 40">
+        <circle class="progress-ring-bg" cx="20" cy="20" r="18"/>
+        <circle class="progress-ring-fill" id="ringFill" cx="20" cy="20" r="18"/>
+      </svg>
+      <div class="progress-text-wrap">
+        <div class="progress-pct" id="pctText">0%</div>
+        <div>progres membaca</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ══ 00. INTRO ══ -->
+    <section class="section" id="intro">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">00 — PENGANTAR</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h1 class="chapter-title">Panduan Operasional<br><em style="color:var(--gold);font-style:normal">Admin MeetSpace</em></h1>
+      <p class="chapter-sub">Panduan lengkap untuk administrator dalam mengelola ruangan meeting dan mengkonfirmasi permintaan booking dari pengguna.</p>
+
+      <div class="intro-hero">
+        <h2>Selamat Datang, <em>Admin</em>! 👋</h2>
+        <p>Sebagai Admin MeetSpace, Anda memiliki kendali penuh atas seluruh operasional sistem — mulai dari menambahkan ruangan baru, mengatur slot waktu, hingga mengkonfirmasi atau menolak permintaan booking dari karyawan.</p>
+        <div class="role-pills">
+          <div class="role-pill">👤 Pengguna Biasa — hanya bisa booking</div>
+          <div class="role-pill admin">🔑 Admin — kelola semua fitur</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="mini-card">
+          <div class="mini-card-icon">🏛️</div>
+          <h4>Kelola Ruangan</h4>
+          <p>Tambah, edit, nonaktifkan ruangan, dan atur fasilitas yang tersedia di setiap ruangan.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-icon">✅</div>
+          <h4>Konfirmasi Booking</h4>
+          <p>Review permintaan booking masuk, konfirmasi yang valid, dan tolak yang tidak sesuai.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-icon">📊</div>
+          <h4>Sinkronisasi Data</h4>
+          <p>Semua perubahan otomatis tersinkron ke file spreadsheet <code>meetspace-database.xlsx</code>.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-icon">📅</div>
+          <h4>Kelola Kalender</h4>
+          <p>Lihat semua booking dalam tampilan kalender bulanan dan atur jadwal blokir ruangan.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">ℹ️</div>
+        <div><strong>Versi Panduan</strong> Panduan ini berlaku untuk MeetSpace versi 1.0 — Mobile Friendly Edition. Semua tampilan layar dalam panduan ini merupakan simulasi antarmuka admin.</div>
+      </div>
+    </section>
+
+    <div class="sec-divider"><span class="sec-divider-label">BAGIAN 1 — AKSES SISTEM</span></div>
+
+    <!-- ══ 01. AKSES ADMIN ══ -->
+    <section class="section" id="akses">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">01 — AKSES</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Mengakses Admin Panel</h2>
+      <p class="chapter-sub">Admin Panel adalah halaman khusus yang hanya bisa diakses oleh pengguna dengan hak akses Administrator.</p>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Buka Website MeetSpace</h4>
+            <p>Akses melalui browser di perangkat apapun</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Buka browser (Chrome, Edge, atau Firefox) lalu buka file <code>meeting-booking-mobile.html</code> atau URL yang sudah di-deploy. Pastikan koneksi internet aktif untuk memuat font.</p>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Masuk ke Halaman Profil</h4>
+            <p>Klik ikon 👤 di navigasi bawah atau sidebar</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Di bagian navigasi bawah (mobile) atau menu atas (desktop), klik tab <strong>Profil</strong>. Ini akan membuka halaman profil pengguna Anda.</p>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">3</div>
+          <div class="step-head-text">
+            <h4>Akses Menu Admin</h4>
+            <p>Scroll ke bawah halaman profil untuk menemukan menu Admin</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Pada halaman Profil, scroll ke bawah. Pengguna dengan role <strong>Administrator</strong> akan melihat kartu khusus <em>"🔑 Panel Admin"</em> yang tidak terlihat oleh pengguna biasa. Klik kartu tersebut.</p>
+          <div class="callout callout-warn">
+            <div class="callout-icon">⚠️</div>
+            <div><strong>Keamanan:</strong> Jika Anda tidak melihat menu Admin, berarti akun Anda belum diberi hak Admin. Hubungi superadmin atau IT untuk meminta akses.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin panel mockup -->
+      <div class="ui-mockup">
+        <div class="mockup-bar">
+          <div class="m-dot" style="background:#FF5F57"></div>
+          <div class="m-dot" style="background:#FEBC2E"></div>
+          <div class="m-dot" style="background:#28C840"></div>
+          <div class="m-url">meetspace/admin-panel</div>
+        </div>
+        <div class="mockup-content" style="padding:12px">
+          <div class="admin-panel">
+            <div class="ap-nav">
+              <div class="ap-logo-m">Meet<span>Space</span></div>
+              <div class="ap-badge-m">ADMIN</div>
+              <div class="ap-nav-items">
+                <div class="ap-nav-item active">Dashboard</div>
+                <div class="ap-nav-item">Ruangan</div>
+                <div class="ap-nav-item">Booking</div>
+                <div class="ap-nav-item">Laporan</div>
+              </div>
+            </div>
+            <div class="ap-body">
+              <div class="ap-sidebar-m">
+                <div class="ap-menu-item active">📊 Dashboard</div>
+                <div class="ap-menu-item">🏛️ Ruangan</div>
+                <div class="ap-menu-item">📋 Booking</div>
+                <div class="ap-menu-item">👥 Pengguna</div>
+                <div class="ap-menu-item">📅 Kalender</div>
+                <div class="ap-menu-item">⚙️ Pengaturan</div>
+              </div>
+              <div class="ap-content">
+                <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:10px">RINGKASAN HARI INI — 4 Mei 2026</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+                  <div style="background:rgba(196,147,58,0.1);border:1px solid rgba(196,147,58,0.2);border-radius:8px;padding:10px;text-align:center">
+                    <div style="font-size:20px;font-weight:700;color:#E8B96A;font-family:'IBM Plex Mono',monospace">10</div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.35)">Total Booking</div>
+                  </div>
+                  <div style="background:rgba(26,127,116,0.1);border:1px solid rgba(26,127,116,0.2);border-radius:8px;padding:10px;text-align:center">
+                    <div style="font-size:20px;font-weight:700;color:#2CB5A6;font-family:'IBM Plex Mono',monospace">7</div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.35)">Dikonfirmasi</div>
+                  </div>
+                  <div style="background:rgba(212,130,10,0.1);border:1px solid rgba(212,130,10,0.2);border-radius:8px;padding:10px;text-align:center">
+                    <div style="font-size:20px;font-weight:700;color:#E8A83A;font-family:'IBM Plex Mono',monospace">3</div>
+                    <div style="font-size:9px;color:rgba(255,255,255,0.35)">Menunggu</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sec-divider"><span class="sec-divider-label">BAGIAN 2 — KELOLA RUANGAN</span></div>
+
+    <!-- ══ 02. TAMBAH RUANGAN ══ -->
+    <section class="section" id="tambah-ruangan">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">02 — TAMBAH RUANGAN</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Menambahkan Ruangan Baru</h2>
+      <p class="chapter-sub">Langkah-langkah untuk mendaftarkan ruangan meeting baru ke dalam sistem agar bisa dipesan oleh pengguna.</p>
+
+      <div class="flow-wrap">
+        <div class="flow-title">ALUR PENAMBAHAN RUANGAN</div>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-icon">🔑</div><div class="flow-step-label">Buka Admin Panel</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><div class="flow-step-icon">🏛️</div><div class="flow-step-label">Menu Ruangan</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step highlight"><div class="flow-step-icon">➕</div><div class="flow-step-label">Tambah Ruangan</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><div class="flow-step-icon">📝</div><div class="flow-step-label">Isi Formulir</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><div class="flow-step-icon">💾</div><div class="flow-step-label">Simpan & Aktifkan</div></div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Buka Menu Ruangan di Admin Panel</h4>
+            <p>Navigasi ke bagian manajemen ruangan</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Setelah masuk ke Admin Panel, klik menu <strong>🏛️ Ruangan</strong> di sidebar kiri. Halaman ini menampilkan daftar semua ruangan yang terdaftar beserta statusnya (Aktif / Nonaktif).</p>
+          <p>Di pojok kanan atas halaman, klik tombol biru <strong>"+ Tambah Ruangan"</strong>. Sebuah formulir akan muncul.</p>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Isi Formulir Data Ruangan</h4>
+            <p>Lengkapi semua informasi ruangan dengan teliti</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="form-mockup">
+            <div class="fm-header">🏛️ Formulir Tambah Ruangan Baru</div>
+            <div class="fm-body">
+              <div class="fm-row">
+                <div class="fm-field">
+                  <label>Nama Ruangan *</label>
+                  <div class="fm-input filled">Ruang Melati</div>
+                </div>
+                <div class="fm-field">
+                  <label>Lantai *</label>
+                  <div class="fm-input filled">Lantai 2</div>
+                </div>
+              </div>
+              <div class="fm-row">
+                <div class="fm-field">
+                  <label>Lokasi / Sayap</label>
+                  <div class="fm-input filled">Sayap Selatan</div>
+                </div>
+                <div class="fm-field">
+                  <label>Kapasitas (orang) *</label>
+                  <div class="fm-input filled">20</div>
+                </div>
+              </div>
+              <div class="fm-field" style="margin-bottom:12px">
+                <label>Deskripsi Ruangan</label>
+                <div class="fm-input filled" style="height:50px;display:flex;align-items:flex-start;padding-top:8px">Ruangan modern dengan view taman, cocok untuk rapat divisi...</div>
+              </div>
+              <div class="fm-field" style="margin-bottom:12px">
+                <label>Fasilitas Tersedia</label>
+                <div class="fm-checks">
+                  <div class="fm-check on">✓ Proyektor</div>
+                  <div class="fm-check on">✓ WiFi</div>
+                  <div class="fm-check on">✓ Whiteboard</div>
+                  <div class="fm-check">  Video Conference</div>
+                  <div class="fm-check">  Catering</div>
+                  <div class="fm-check on">✓ AC</div>
+                </div>
+              </div>
+              <div class="fm-actions">
+                <button class="fm-btn fm-btn-cancel">Batal</button>
+                <button class="fm-btn fm-btn-save">💾 Simpan Ruangan</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-tip">
+            <div class="callout-icon">💡</div>
+            <div><strong>Tips Penamaan:</strong> Gunakan nama yang deskriptif dan konsisten. Contoh yang baik: "Ruang Melati", "Aula Merdeka", "Meeting Room B2". Hindari nama duplikat atau terlalu umum seperti "Ruangan 1".</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">3</div>
+          <div class="step-head-text">
+            <h4>Atur Status & Simpan</h4>
+            <p>Tentukan apakah ruangan langsung aktif atau disimpan sebagai draft</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Sebelum menyimpan, pilih status ruangan:</p>
+          <table class="data-table">
+            <tr><th>Status</th><th>Keterangan</th><th>Bisa Dipesan?</th></tr>
+            <tr>
+              <td><span class="badge badge-green">● Aktif</span></td>
+              <td>Ruangan tampil di halaman pencarian pengguna</td>
+              <td>✅ Ya</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-amber">● Draft</span></td>
+              <td>Disimpan tapi belum tampil ke pengguna</td>
+              <td>❌ Tidak</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-red">● Nonaktif</span></td>
+              <td>Tersembunyi dari pengguna, sedang dalam perawatan</td>
+              <td>❌ Tidak</td>
+            </tr>
+          </table>
+          <p>Klik <strong>"💾 Simpan Ruangan"</strong>. Data akan langsung tersinkron ke sheet <code>🏛️ Data Ruangan</code> pada file spreadsheet <code>meetspace-database.xlsx</code>.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">📊</div>
+        <div><strong>Otomatis ke Spreadsheet:</strong> Setiap ruangan yang ditambahkan akan langsung muncul sebagai baris baru di sheet <strong>"🏛️ Data Ruangan"</strong> pada file Excel. Dashboard KPI juga otomatis terupdate.</div>
+      </div>
+    </section>
+
+    <!-- ══ 03. EDIT RUANGAN ══ -->
+    <section class="section" id="edit-ruangan">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">03 — EDIT & NONAKTIFKAN</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Edit & Nonaktifkan Ruangan</h2>
+      <p class="chapter-sub">Cara mengubah informasi ruangan yang sudah ada atau menonaktifkannya sementara/permanen.</p>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Temukan Ruangan yang Akan Diedit</h4>
+            <p>Gunakan fitur pencarian atau filter di daftar ruangan</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Di menu <strong>🏛️ Ruangan</strong>, gunakan kolom pencarian atau filter berdasarkan lantai untuk menemukan ruangan. Klik baris ruangan yang ingin diedit untuk memperluas detailnya.</p>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Klik Tombol Edit</h4>
+            <p>Tersedia di kolom Aksi pada setiap baris ruangan</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Di kolom paling kanan setiap baris ruangan, terdapat tombol aksi:</p>
+          <table class="data-table">
+            <tr><th>Tombol</th><th>Fungsi</th></tr>
+            <tr><td><span class="badge badge-blue">✏️ Edit</span></td><td>Buka formulir edit — ubah nama, kapasitas, fasilitas, dll.</td></tr>
+            <tr><td><span class="badge badge-amber">⏸️ Nonaktifkan</span></td><td>Sembunyikan ruangan dari pengguna (sementara, misal: renovasi)</td></tr>
+            <tr><td><span class="badge badge-red">🗑️ Hapus</span></td><td>Hapus permanen dari sistem (hati-hati, tidak bisa dibatalkan!)</td></tr>
+          </table>
+          <div class="callout callout-danger">
+            <div class="callout-icon">🚨</div>
+            <div><strong>Perhatian — Hapus Permanen:</strong> Tombol Hapus akan menghapus ruangan dan SEMUA data terkaitnya secara permanen. Jika hanya ingin menutup ruangan sementara, gunakan <strong>Nonaktifkan</strong> saja.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">3</div>
+          <div class="step-head-text">
+            <h4>Simpan Perubahan</h4>
+            <p>Konfirmasi dan simpan hasil edit</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Setelah mengedit, klik <strong>"💾 Simpan Perubahan"</strong>. Sistem akan memberikan notifikasi konfirmasi dan data langsung terupdate di spreadsheet pada sheet <code>🏛️ Data Ruangan</code>.</p>
+          <div class="callout callout-warn">
+            <div class="callout-icon">⚠️</div>
+            <div><strong>Booking yang Sudah Ada:</strong> Jika ada booking aktif untuk ruangan yang dinonaktifkan, sistem akan memberikan peringatan. Admin perlu menghubungi pemesan dan menawarkan ruangan alternatif sebelum menonaktifkan.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 04. SLOT WAKTU ══ -->
+    <section class="section" id="slot-waktu">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">04 — SLOT WAKTU</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Mengelola Slot Waktu</h2>
+      <p class="chapter-sub">Atur jam operasional ruangan dan blokir slot waktu tertentu agar tidak bisa dipesan.</p>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Atur Jam Operasional Ruangan</h4>
+            <p>Tentukan jam buka dan tutup setiap ruangan</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Di halaman edit ruangan, geser ke bagian <strong>"⏰ Jam Operasional"</strong>. Atur jam buka (misalnya <strong>07:00</strong>) dan jam tutup (misalnya <strong>20:00</strong>). Slot waktu yang muncul di halaman pengguna akan otomatis menyesuaikan rentang ini.</p>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Blokir Slot Waktu Tertentu</h4>
+            <p>Untuk pemeliharaan, acara khusus, atau hari libur</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Buka menu <strong>📅 Kalender</strong> di Admin Panel. Pilih ruangan dan klik tanggal yang ingin diblokir. Klik <strong>"🔒 Blokir Slot"</strong> lalu pilih jam yang ingin dikunci. Tambahkan keterangan alasan blokir.</p>
+          <div class="interactive-checklist">
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Blokir hari libur nasional</strong><span>Pastikan slot otomatis terblokir di semua ruangan pada hari libur</span></div>
+            </div>
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Blokir jam maintenance rutin</strong><span>Contoh: setiap Senin 07:00–08:00 untuk pembersihan ruangan</span></div>
+            </div>
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Blokir untuk acara khusus</strong><span>Reservasi prioritas untuk rapat direksi atau event perusahaan</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sec-divider"><span class="sec-divider-label">BAGIAN 3 — KELOLA BOOKING</span></div>
+
+    <!-- ══ 05. LIHAT BOOKING ══ -->
+    <section class="section" id="lihat-booking">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">05 — LIHAT BOOKING</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Melihat Semua Booking</h2>
+      <p class="chapter-sub">Pantau seluruh permintaan booking yang masuk dari semua pengguna secara real-time.</p>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Buka Menu Booking di Admin Panel</h4>
+            <p>Semua permintaan masuk akan tampil di sini</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Klik menu <strong>📋 Booking</strong> di sidebar Admin Panel. Halaman ini menampilkan seluruh booking dalam bentuk tabel dengan filter dan pencarian.</p>
+
+          <!-- Booking table mockup -->
+          <div style="background:var(--ink);border-radius:12px;overflow:hidden;margin:16px 0">
+            <div style="padding:12px 16px;background:#0A0F1A;font-size:11px;color:rgba(255,255,255,0.4);display:flex;gap:10px;align-items:center">
+              <span style="color:var(--gold2);font-weight:700">📋 DAFTAR BOOKING</span>
+              <span style="margin-left:auto;color:rgba(255,255,255,0.3)">10 total · 3 menunggu konfirmasi</span>
+            </div>
+            <div class="booking-row-m" style="background:#111827;font-size:10px;color:rgba(255,255,255,0.3)">
+              <div class="brm-code">KODE</div>
+              <div class="brm-room">RUANGAN</div>
+              <div class="brm-date">TANGGAL</div>
+              <div class="brm-status">STATUS</div>
+              <div style="width:100px;flex-shrink:0">AKSI</div>
+            </div>
+            <div class="booking-row-m">
+              <div class="brm-code">MSP-719204</div>
+              <div class="brm-room">Ruang Mahoni</div>
+              <div class="brm-date">08 Mei '26</div>
+              <div class="brm-status"><span class="badge badge-amber" style="font-size:9px">⏳ Menunggu</span></div>
+              <div class="brm-actions"><button class="brm-btn brm-btn-ok">✓ OK</button><button class="brm-btn brm-btn-reject">✕ Tolak</button></div>
+            </div>
+            <div class="booking-row-m">
+              <div class="brm-code">MSP-841033</div>
+              <div class="brm-room">Grand Panorama</div>
+              <div class="brm-date">22 Mei '26</div>
+              <div class="brm-status"><span class="badge badge-amber" style="font-size:9px">⏳ Menunggu</span></div>
+              <div class="brm-actions"><button class="brm-btn brm-btn-ok">✓ OK</button><button class="brm-btn brm-btn-reject">✕ Tolak</button></div>
+            </div>
+            <div class="booking-row-m">
+              <div class="brm-code">MSP-482031</div>
+              <div class="brm-room">Ruang Cendana</div>
+              <div class="brm-date">06 Mei '26</div>
+              <div class="brm-status"><span class="badge badge-green" style="font-size:9px">✓ Dikonfirmasi</span></div>
+              <div class="brm-actions"><button class="brm-btn" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3)">👁 Detail</button></div>
+            </div>
+            <div class="booking-row-m">
+              <div class="brm-code">MSP-571028</div>
+              <div class="brm-room">Ruang Laguna</div>
+              <div class="brm-date">27 Mei '26</div>
+              <div class="brm-status"><span class="badge badge-red" style="font-size:9px">✕ Dibatalkan</span></div>
+              <div class="brm-actions"><button class="brm-btn" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3)">👁 Detail</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Filter dan Cari Booking</h4>
+            <p>Gunakan filter untuk menemukan booking spesifik dengan cepat</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Di halaman Booking, tersedia berbagai filter untuk memudahkan pencarian:</p>
+          <table class="data-table">
+            <tr><th>Filter</th><th>Kegunaan</th></tr>
+            <tr><td>📅 <strong>Rentang Tanggal</strong></td><td>Tampilkan booking dalam periode tertentu</td></tr>
+            <tr><td>🏛️ <strong>Nama Ruangan</strong></td><td>Filter booking untuk ruangan tertentu saja</td></tr>
+            <tr><td>⏳ <strong>Status</strong></td><td>Filter berdasarkan: Menunggu / Dikonfirmasi / Dibatalkan</td></tr>
+            <tr><td>👤 <strong>Nama Pemesan</strong></td><td>Cari semua booking dari karyawan tertentu</td></tr>
+            <tr><td>🏢 <strong>Departemen</strong></td><td>Filter booking berdasarkan divisi/departemen</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 06. KONFIRMASI ══ -->
+    <section class="section" id="konfirmasi">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">06 — KONFIRMASI BOOKING</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Mengkonfirmasi Booking</h2>
+      <p class="chapter-sub">Proses review dan konfirmasi permintaan booking yang masuk dari pengguna. Ini adalah tugas utama Admin setiap harinya.</p>
+
+      <div class="flow-wrap">
+        <div class="flow-title">ALUR KONFIRMASI BOOKING</div>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="flow-step-icon">📩</div><div class="flow-step-label">Permintaan Masuk</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step highlight"><div class="flow-step-icon">🔍</div><div class="flow-step-label">Admin Review</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><div class="flow-step-icon">✅</div><div class="flow-step-label">Dikonfirmasi</div></div>
+          <div class="flow-arrow">›</div>
+          <div class="flow-step"><div class="flow-step-icon">📧</div><div class="flow-step-label">Notifikasi Dikirim</div></div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Buka Detail Booking yang "Menunggu"</h4>
+            <p>Klik kode booking atau tombol Detail untuk melihat informasi lengkap</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Di tabel booking, klik baris booking berstatus <span class="badge badge-amber">⏳ Menunggu</span>. Sebuah panel detail akan terbuka di sebelah kanan (desktop) atau muncul sebagai bottom sheet (mobile).</p>
+          <p>Panel detail menampilkan informasi lengkap:</p>
+          <ol class="num-list">
+            <li class="num-item"><div class="num-item-text"><strong>Identitas Pemesan</strong><span>Nama, departemen, email, dan nomor HP pengguna yang melakukan booking</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Detail Ruangan</strong><span>Nama ruangan, lantai, kapasitas, dan fasilitas yang dipesan</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Waktu Booking</strong><span>Tanggal, jam mulai, jam selesai, dan total durasi</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Agenda Meeting</strong><span>Tujuan dan deskripsi rapat yang diisi pengguna saat booking</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Jumlah Peserta</strong><span>Pastikan tidak melebihi kapasitas maksimum ruangan</span></div></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Periksa Kelayakan Booking</h4>
+            <p>Gunakan checklist ini sebelum mengkonfirmasi</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Sebelum mengklik Konfirmasi, periksa hal-hal berikut:</p>
+          <div class="interactive-checklist">
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Tidak ada double-booking</strong><span>Pastikan ruangan tidak sudah dipesan pada slot waktu yang sama</span></div>
+            </div>
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Kapasitas sesuai</strong><span>Jumlah peserta tidak melebihi kapasitas maksimum ruangan</span></div>
+            </div>
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Ruangan dalam kondisi aktif</strong><span>Status ruangan adalah Aktif dan tidak sedang dalam perawatan</span></div>
+            </div>
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Data pemesan lengkap</strong><span>Nama, email, dan nomor HP pemesan sudah terisi dengan benar</span></div>
+            </div>
+            <div class="check-row" onclick="toggleCheck(this)">
+              <div class="check-box-ui"></div>
+              <div class="check-label"><strong>Agenda meeting jelas</strong><span>Ada keterangan agenda meeting yang terisi (bukan kosong)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">3</div>
+          <div class="step-head-text">
+            <h4>Klik Tombol Konfirmasi</h4>
+            <p>Ubah status dari "Menunggu" menjadi "Dikonfirmasi"</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Setelah semua checklist terpenuhi, klik tombol hijau <strong>"✅ Konfirmasi Booking"</strong> di panel detail atau langsung dari kolom Aksi pada tabel.</p>
+          <div class="callout callout-tip">
+            <div class="callout-icon">✅</div>
+            <div><strong>Notifikasi Otomatis:</strong> Begitu Admin mengklik Konfirmasi, sistem secara otomatis mengirim notifikasi email ke pemesan berisi: kode booking, nama ruangan, tanggal & waktu, dan QR code untuk akses ruangan.</div>
+          </div>
+          <p>Status booking di spreadsheet (<code>📋 Data Booking</code>) juga langsung berubah menjadi <strong>"Dikonfirmasi"</strong> dan formula dashboard akan terupdate secara real-time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 07. TOLAK ══ -->
+    <section class="section" id="tolak-booking">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">07 — TOLAK & BATALKAN</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Menolak & Membatalkan Booking</h2>
+      <p class="chapter-sub">Panduan untuk menolak permintaan yang tidak memenuhi syarat, atau membatalkan booking yang sudah dikonfirmasi.</p>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Menolak Permintaan Booking Baru</h4>
+            <p>Untuk booking berstatus "Menunggu" yang tidak bisa dikonfirmasi</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Dari panel detail booking, klik tombol merah <strong>"❌ Tolak Booking"</strong>. Sebuah dialog akan muncul meminta <strong>alasan penolakan</strong>. Pilih alasan dari daftar atau tulis manual:</p>
+          <table class="data-table">
+            <tr><th>Alasan Penolakan</th><th>Kapan Digunakan</th></tr>
+            <tr><td>🔄 Double booking</td><td>Ruangan sudah dipesan di slot yang sama</td></tr>
+            <tr><td>📏 Kapasitas melebihi</td><td>Peserta melebihi kapasitas ruangan</td></tr>
+            <tr><td>🔧 Ruangan dalam perawatan</td><td>Ada perbaikan atau maintenance terjadwal</td></tr>
+            <tr><td>📋 Data tidak lengkap</td><td>Informasi pemesan atau agenda tidak jelas</td></tr>
+            <tr><td>✍️ Alasan lainnya</td><td>Tulis alasan custom secara manual</td></tr>
+          </table>
+          <div class="callout callout-tip">
+            <div class="callout-icon">💬</div>
+            <div><strong>Etika Admin:</strong> Selalu isi alasan penolakan dengan jelas dan sopan. Alasan ini akan dikirim ke pemesan melalui email sehingga mereka bisa melakukan perbaikan atau mencari alternatif.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Membatalkan Booking yang Sudah Dikonfirmasi</h4>
+            <p>Situasi darurat: ruangan rusak, bencana, atau perubahan mendadak</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Untuk booking yang sudah berstatus <span class="badge badge-green">✓ Dikonfirmasi</span>, klik <strong>"🔄 Batalkan Booking"</strong>. Sistem akan meminta konfirmasi dua kali karena ini tindakan berisiko tinggi.</p>
+          <div class="callout callout-danger">
+            <div class="callout-icon">🚨</div>
+            <div><strong>Penting:</strong> Membatalkan booking yang sudah dikonfirmasi harus disertai pemberitahuan aktif ke pemesan. Sistem mengirim email otomatis, tapi Admin juga disarankan menghubungi langsung via telepon atau WhatsApp untuk situasi mendadak.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sec-divider"><span class="sec-divider-label">BAGIAN 4 — SPREADSHEET & DATA</span></div>
+
+    <!-- ══ 08. SPREADSHEET ══ -->
+    <section class="section" id="spreadsheet">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">08 — SPREADSHEET</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Sinkronisasi Data ke Spreadsheet</h2>
+      <p class="chapter-sub">Semua data website tersimpan dan tersinkron ke file <code>meetspace-database.xlsx</code>. Berikut cara membaca dan mengelolanya.</p>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">1</div>
+          <div class="step-head-text">
+            <h4>Struktur File Spreadsheet</h4>
+            <p>File Excel terdiri dari 4 sheet yang saling terhubung</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <table class="data-table">
+            <tr><th>Sheet</th><th>Isi Data</th><th>Diupdate Oleh</th></tr>
+            <tr>
+              <td>📊 <strong>Dashboard</strong></td>
+              <td>KPI, statistik per ruangan, grafik ringkasan</td>
+              <td>Otomatis (formula)</td>
+            </tr>
+            <tr>
+              <td>📋 <strong>Data Booking</strong></td>
+              <td>Semua record booking: kode, ruangan, tanggal, status, pemesan</td>
+              <td>Admin & Sistem</td>
+            </tr>
+            <tr>
+              <td>👤 <strong>Profil Pengguna</strong></td>
+              <td>Data karyawan, statistik booking pribadi</td>
+              <td>Pengguna & Admin</td>
+            </tr>
+            <tr>
+              <td>🏛️ <strong>Data Ruangan</strong></td>
+              <td>Master data ruangan: kapasitas, fasilitas, status</td>
+              <td>Admin</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">2</div>
+          <div class="step-head-text">
+            <h4>Cara Update Manual di Spreadsheet</h4>
+            <p>Ketika perlu mengoreksi data langsung dari Excel</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Buka file <code>meetspace-database.xlsx</code> di Microsoft Excel atau Google Sheets. Untuk mengkonfirmasi booking secara manual di spreadsheet:</p>
+          <ol class="num-list">
+            <li class="num-item"><div class="num-item-text"><strong>Buka sheet "📋 Data Booking"</strong><span>Temukan baris booking yang berstatus "Menunggu" di kolom G (Status)</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Klik sel Status (kolom G)</strong><span>Ubah teks "Menunggu" menjadi "Dikonfirmasi" atau "Dibatalkan"</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Simpan file (Ctrl+S)</strong><span>Perubahan akan otomatis terupdate di sheet Dashboard karena formula terhubung</span></div></li>
+            <li class="num-item"><div class="num-item-text"><strong>Sinkronkan ke website</strong><span>Di Admin Panel website, klik "🔄 Sinkronisasi Manual" agar perubahan tampil di halaman pengguna</span></div></li>
+          </ol>
+          <div class="callout callout-warn">
+            <div class="callout-icon">⚠️</div>
+            <div><strong>Catatan Penting:</strong> Perubahan langsung di file Excel tidak otomatis tampil di website. Selalu gunakan tombol <strong>"Sinkronisasi Manual"</strong> di Admin Panel setelah mengedit spreadsheet secara langsung.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-head">
+          <div class="step-num-badge">3</div>
+          <div class="step-head-text">
+            <h4>Tambah Ruangan via Spreadsheet</h4>
+            <p>Cara cepat menambahkan banyak ruangan sekaligus</p>
+          </div>
+        </div>
+        <div class="step-body">
+          <p>Buka sheet <strong>"🏛️ Data Ruangan"</strong>. Tambahkan baris baru di bawah data yang ada dengan mengisi kolom:</p>
+          <table class="data-table">
+            <tr><th>Kolom</th><th>Data yang Diisi</th><th>Contoh</th></tr>
+            <tr><td>B</td><td>Nama Ruangan</td><td>Ruang Melati</td></tr>
+            <tr><td>C</td><td>Lantai</td><td>Lt. 2</td></tr>
+            <tr><td>D</td><td>Lokasi / Sayap</td><td>Sayap Selatan</td></tr>
+            <tr><td>E</td><td>Kapasitas (angka)</td><td>20</td></tr>
+            <tr><td>F</td><td>Proyektor (✅/❌)</td><td>✅</td></tr>
+            <tr><td>G</td><td>WiFi (✅/❌)</td><td>✅</td></tr>
+            <tr><td>H</td><td>Whiteboard (✅/❌)</td><td>✅</td></tr>
+            <tr><td>I</td><td>Video Conference (✅/❌)</td><td>❌</td></tr>
+            <tr><td>J</td><td>Catering (✅/❌)</td><td>❌</td></tr>
+            <tr><td>K</td><td>Fasilitas Utama (teks)</td><td>Proyektor HD, WiFi, AC</td></tr>
+          </table>
+          <p style="margin-top:12px">Setelah menyimpan file, klik <strong>"🔄 Sinkronisasi"</strong> di Admin Panel untuk memuat ruangan baru ke website.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 09. RINGKASAN ══ -->
+    <section class="section" id="ringkasan">
+      <div class="chapter-eyebrow">
+        <span class="chapter-num">09 — RINGKASAN</span>
+        <div class="chapter-rule"></div>
+      </div>
+      <h2 class="chapter-title">Ringkasan Tugas Admin</h2>
+      <p class="chapter-sub">Panduan cepat untuk operasional harian dan mingguan Admin MeetSpace.</p>
+
+      <div class="summary-box">
+        <h3>✅ Checklist Harian Admin</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item-icon">📩</div>
+            <h4>Pagi (08:00)</h4>
+            <p>Cek booking masuk semalam → Konfirmasi atau tolak booking berstatus "Menunggu"</p>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-icon">📊</div>
+            <h4>Siang (12:00)</h4>
+            <p>Cek Dashboard → Pastikan tidak ada konflik slot → Sinkronisasi spreadsheet</p>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-icon">🔍</div>
+            <h4>Sore (15:00)</h4>
+            <p>Review booking besok → Konfirmasi ketersediaan ruangan → Kirim pengingat ke pemesan</p>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-icon">📁</div>
+            <h4>Mingguan</h4>
+            <p>Export laporan ke Excel → Update master data ruangan → Evaluasi statistik penggunaan</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px">
+        <table class="data-table">
+          <tr><th>Tugas</th><th>Cara Melakukannya</th><th>Frekuensi</th></tr>
+          <tr>
+            <td>Konfirmasi booking masuk</td>
+            <td>Admin Panel → 📋 Booking → Filter "Menunggu" → ✅ Konfirmasi</td>
+            <td><span class="badge badge-green">Harian</span></td>
+          </tr>
+          <tr>
+            <td>Tambah ruangan baru</td>
+            <td>Admin Panel → 🏛️ Ruangan → ➕ Tambah Ruangan → Isi Form → Simpan</td>
+            <td><span class="badge badge-blue">Sesuai kebutuhan</span></td>
+          </tr>
+          <tr>
+            <td>Nonaktifkan ruangan</td>
+            <td>Admin Panel → 🏛️ Ruangan → Pilih ruangan → ⏸️ Nonaktifkan</td>
+            <td><span class="badge badge-blue">Sesuai kebutuhan</span></td>
+          </tr>
+          <tr>
+            <td>Blokir slot waktu</td>
+            <td>Admin Panel → 📅 Kalender → Pilih tanggal → 🔒 Blokir Slot</td>
+            <td><span class="badge badge-amber">Mingguan</span></td>
+          </tr>
+          <tr>
+            <td>Export laporan</td>
+            <td>Profil → 📊 Export → Unduh file CSV/Excel</td>
+            <td><span class="badge badge-amber">Mingguan</span></td>
+          </tr>
+          <tr>
+            <td>Sinkronisasi spreadsheet</td>
+            <td>Admin Panel → ⚙️ Pengaturan → 🔄 Sinkronisasi Manual</td>
+            <td><span class="badge badge-amber">Setelah edit Excel</span></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="callout callout-tip" style="margin-top:24px">
+        <div class="callout-icon">🏆</div>
+        <div><strong>Tips Admin Terbaik:</strong> Konfirmasi booking dalam waktu maksimal <strong>1×24 jam</strong> setelah permintaan masuk. Karyawan yang menunggu konfirmasi tidak bisa merencanakan kegiatan mereka dengan baik jika terlalu lama menunggu.</div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:12px">
+        <div class="callout-icon">📞</div>
+        <div><strong>Butuh Bantuan?</strong> Jika menemui kendala teknis, hubungi tim IT di <code>it-support@perusahaan.com</code> atau melalui tiket helpdesk internal. Sertakan screenshot error dan kode booking yang bermasalah.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <strong>MeetSpace</strong> — Panduan Operasional Admin v1.0 &nbsp;·&nbsp; Gedung Menara Biru &nbsp;·&nbsp; Dokumen Internal
+</footer>
+
+<script>
+/* ── Reading progress ── */
+function updateProgress() {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+
+  document.getElementById('readBar').style.width = pct + '%';
+  document.getElementById('pctText').textContent = pct + '%';
+
+  // ring: circumference = 2πr = 2*π*18 ≈ 113
+  const circ = 113;
+  const offset = circ - (pct / 100) * circ;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+}
+window.addEventListener('scroll', updateProgress);
+updateProgress();
+
+/* ── Sidebar active link ── */
+function setActive(el) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* Intersection observer for auto-highlight */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+
+/* ── Interactive checklist ── */
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  const box = el.querySelector('.check-box-ui');
+  if (el.classList.contains('done')) box.textContent = '✓';
+  else box.textContent = '';
+}
+</script>
+</body>
+</html>
