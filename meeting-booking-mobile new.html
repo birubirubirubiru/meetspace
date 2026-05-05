@@ -921,6 +921,7 @@ body {
   background: var(--cream);
   outline: none;
   transition: border-color 0.2s;
+  appearance: none;
   -webkit-appearance: none;
 }
 .form-group input:focus,
@@ -1460,6 +1461,7 @@ body {
   color: #fff;
   outline: none;
   transition: border-color 0.2s, background 0.2s;
+  appearance: none;
   -webkit-appearance: none;
 }
 .lf-input::placeholder { color: rgba(255,255,255,0.2); }
@@ -3607,7 +3609,7 @@ buildMainCalendar();
    GOOGLE SHEETS INTEGRATION
    Ganti APPS_SCRIPT_URL dengan URL Deploy Web App kamu
 ═══════════════════════════════════════════════════════════════ */
-const APPS_SCRIPT_URL = 'GANTI_DENGAN_URL_APPS_SCRIPT_KAMU';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqplEbBkbM2VSxe82KTMDNQicT0Pcwfw5XDDFar_DY5ePGI0ddjZwRz-URndTrwJpK/exec';
 const SHEETS_READY = APPS_SCRIPT_URL !== 'GANTI_DENGAN_URL_APPS_SCRIPT_KAMU';
 
 /* ── Low-level API calls ─────────────────────────────────────── */
@@ -3645,7 +3647,7 @@ function showLoading(msg) {
     el = document.createElement('div');
     el.id = 'sheetsLoader';
     el.style.cssText = 'position:fixed;inset:0;background:rgba(24,25,43,.72);backdrop-filter:blur(6px);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px';
-    el.innerHTML = '<div style="width:44px;height:44px;border:3px solid rgba(201,152,106,.25);border-top-color:#C9986A;border-radius:50%;animation:spin .7s linear infinite"></div><div id="sheetsLoaderMsg" style="color:#fff;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif"></div>';
+    el.innerHTML = "<div style=\"width:44px;height:44px;border:3px solid rgba(201,152,106,.25);border-top-color:#C9986A;border-radius:50%;animation:spin .7s linear infinite\"></div><div id=\"sheetsLoaderMsg\" style=\"color:#fff;font-size:14px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif\"></div>";
     document.body.appendChild(el);
     const st = document.createElement('style');
     st.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';

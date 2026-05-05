@@ -2649,6 +2649,48 @@ const sampleBookings = [
   { date:'2026-05-04', room:'Ruang Cendana', time:'10:00–11:00', pax:4,  status:'confirmed', code:'MSP-100111' },
 ];
 
+const API_BASE = 'https://script.google.com/macros/s/AKfycbwqplEbBkbM2VSxe82KTMDNQicT0Pcwfw5XDDFar_DY5ePGI0ddjZwRz-URndTrwJpK/exec';
+
+function getBookingRange() {
+  if (!selectedSlots.length) return { start:'00:00', end:'00:00' };
+  const sorted = selectedSlots.slice().sort();
+  const start = sorted[0];
+  const [h, m] = sorted[sorted.length - 1].split(':').map(Number);
+  const endHour = h + 1;
+  return {
+    start,
+    end: `${String(endHour).padStart(2,'0')}:${String(m).padStart(2,'0')}`
+  };
+}
+
+async function postToSpreadsheet(payload) {
+  const response = await fetch(API_BASE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error('Gagal menghubungi server spreadsheet');
+  }
+  return response.json();
+}
+
+function addBookingLocal(booking) {
+  allBookings.push(booking);
+  sampleBookings.push({
+    date: booking.date,
+    room: booking.room,
+    time: booking.start + '–' + booking.end,
+    pax: booking.pax,
+    status: 'pending',
+    code: booking.code,
+  });
+  renderProfile();
+  if (activeView === 'calendar') buildMainCalendar();
+  if (activeView === 'admin' && currentUser) buildAdminView(currentUser);
+}
+
 /* ===== VIEW SWITCHING ===== */
 let activeView = 'home';
 function switchView(viewId, trigger) {
@@ -2970,21 +3012,66 @@ function updateSummary() {
 }
 
 /* ===== CONFIRM BOOKING ===== */
-function confirmBooking() {
+async function confirmBooking() {
   if (currentUser && currentUser.role === 'guest') { showToast('🔒 Login sebagai Staff untuk booking'); return; }
   const name = document.getElementById('fName').value.trim();
   const email = document.getElementById('fEmail').value.trim();
+  const dept = document.getElementById('fDept').value.trim();
+  const pax = Number(document.getElementById('fPax').value) || selectedSlots.length || 1;
+  const agenda = document.getElementById('fAgenda').value.trim();
+  const extra = document.getElementById('fExtra').value || 'Tidak ada';
+
   if (!name)  { showToast('⚠️ Mohon isi nama penyelenggara'); return; }
   if (!email) { showToast('⚠️ Mohon isi alamat email'); return; }
   if (!modalSelectedDate) { showToast('⚠️ Mohon pilih tanggal terlebih dahulu'); return; }
   if (selectedSlots.length === 0) { showToast('⚠️ Mohon pilih minimal 1 slot waktu'); return; }
 
+  const room = rooms[currentRoomIdx].title;
+  const { start, end } = getBookingRange();
+  const payload = {
+    action: 'addBooking',
+    room,
+    date: modalSelectedDate,
+    start,
+    end,
+    pax,
+    name,
+    dept,
+    email,
+    agenda,
+    extra,
+  };
+
   closeModal();
-  const code = 'MSP-' + Math.floor(100000 + Math.random() * 900000);
-  document.getElementById('bookingCode').textContent = code;
-  setTimeout(() => {
-    document.getElementById('successOverlay').classList.add('active');
-  }, 150);
+  showToast('📤 Mengirim data booking ke spreadsheet...');
+
+  try {
+    const result = await postToSpreadsheet(payload);
+    if (!result.ok) {
+      throw new Error(result.error || 'Gagal menyimpan booking');
+    }
+
+    const booking = {
+      code: result.code || ('MSP-' + Math.floor(100000 + Math.random() * 900000)),
+      room,
+      date: modalSelectedDate,
+      start,
+      end,
+      pax,
+      status: 'Menunggu',
+      name,
+      dept,
+      email,
+    };
+    addBookingLocal(booking);
+    document.getElementById('bookingCode').textContent = booking.code;
+
+    setTimeout(() => {
+      document.getElementById('successOverlay').classList.add('active');
+    }, 150);
+  } catch (err) {
+    showToast('❌ ' + err.message);
+  }
 }
 
 function closeSuccess() {
