@@ -2651,6 +2651,32 @@ const sampleBookings = [
 
 const API_BASE = 'https://script.google.com/macros/s/AKfycbwqplEbBkbM2VSxe82KTMDNQicT0Pcwfw5XDDFar_DY5ePGI0ddjZwRz-URndTrwJpK/exec';
 
+// ═══ KONFIGURASI GOOGLE SHEETS ═══
+const SHEET_ID = '1fC3JL08lEVjohfQhvYDczd5UGPRIzdTb_6br0Jk93yo';
+const SHEET_NAME = 'Data Booking';
+const SHEETS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+
+// Fungsi membaca data dari Google Sheets
+async function loadBookingsFromSheets() {
+  try {
+    const response = await fetch(SHEETS_URL);
+    const text = await response.text();
+    // Parse response
+    const json = JSON.parse(text.substring(47).slice(0,-2));
+    const rows = json.table.rows;
+    const bookings = rows.map(row => ({
+      code:   row.c[0]?.v || '',
+      room:   row.c[1]?.v || '',
+      date:   row.c[2]?.v || '',
+      status: row.c[6]?.v || 'Menunggu',
+      name:   row.c[7]?.v || '',
+    }));
+    return bookings;
+  } catch(e) {
+    return allBookings; // fallback ke data lokal
+  }
+}
+
 function getBookingRange() {
   if (!selectedSlots.length) return { start:'00:00', end:'00:00' };
   const sorted = selectedSlots.slice().sort();
