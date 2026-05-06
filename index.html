@@ -2694,23 +2694,12 @@ async function postToSpreadsheet(payload) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
-  }).catch(err => {
-    console.error('[Fetch Error]', err);
-    throw new Error(`Network error: ${err.message}. Pastikan Web App Apps Script sudah dideploy dengan akses "Anyone"`);
   });
 
   if (!response.ok) {
-    const text = await response.text().catch(() => 'No response body');
-    console.error('[Response Error]', response.status, text);
-    throw new Error(`Server error: ${response.status}. ${text}`);
+    throw new Error('Gagal menghubungi server spreadsheet');
   }
-
-  try {
-    return await response.json();
-  } catch (err) {
-    console.error('[JSON Parse Error]', err);
-    throw new Error('Response bukan JSON. Cek Apps Script deployment.');
-  }
+  return response.json();
 }
 
 function addBookingLocal(booking) {
